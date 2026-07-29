@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Public School Andharkotha - Result Portal</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+.logo {
+    width: 140px;
+    height: 140px;
+    display: block;
+    margin: auto;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+h1 {
+    text-align: center;
+    color: #003399;
+    margin-top: 10px;
+}
+
+h2 {
+    text-align: center;
+    color: #ff9800;
+    margin-top: 5px;
+}
+
+.tagline {
+    text-align: center;
+    margin-bottom: 15px;
+    color: #666;
+}
+
+hr {
+    margin: 15px 0;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+}
+
+select, input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background: #003399;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0055cc;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th {
+    background: #003399;
+    color: white;
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+    text-align: center;
+}
+
+.info {
+    line-height: 28px;
+    margin-top: 15px;
+}
+
+.pass {
+    color: green;
+    font-weight: bold;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<img src="logo.jpg" class="logo" alt="School Logo">
+
+<h1>SMART PUBLIC SCHOOL</h1>
+<h2>ANDHARKOTHA</h2>
+<h2 style="text-align:center;color:#003399; font-size: 18px;">
+FIRST TERMINAL EXAMINATION 2026-27
+</h2>
+
+<p class="tagline">Dream Learn Achieve</p>
+
+<hr>
+
+<label for="class">Select Class</label>
+<select id="class">
+    <option value="">-- Select Class --</option>
+    <option>Nursery A</option> 
+    <option>Nursery B,C</option>
+    <option>LKG</option>
+    <option>UKG</option>
+    <option>Class 1</option>
+    <option>Class 2</option>
+    <option>Class 3</option>
+</select>
+
+<label for="roll">Enter Roll Number</label>
+<input type="number" id="roll" placeholder="Enter Roll Number">
+
+<button onclick="checkResult()">Check Result</button>
+
+<div id="result"></div>
+
+<!-- Teacher Login Button -->
+<button onclick="openLogin()" style="background:#0d47a1;">🔒 Teacher Login</button>
+
+<div class="footer">
+© Smart Public School Andharkotha
+</div>
+
+</div>
+
+<!-- Login Box Modal -->
+<div id="loginBox" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+    <div style="background:white; width:320px; padding:20px; border-radius:10px; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">
+        <h2 style="text-align:center; color:#003399;">Teacher Login</h2>
+        <input type="text" id="userid" placeholder="Enter User ID">
+        <input type="text" id="schoolcode" placeholder="Enter School Code" style="margin-top:10px;">
+        <input type="password" id="password" placeholder="Enter Password" style="margin-top:10px;">
+
+        <button onclick="teacherLogin()" style="background:green; margin-top:15px;">Login</button>
+        <button onclick="closeLogin()" style="background:red; margin-top:10px;">Close</button>
+    </div>
+</div>
+
+<script>
+function checkResult() {
+    let roll = document.getElementById("roll").value;
+    let cls = document.getElementById("class").value;
+
+    // =========================
+    // Student 1
+    // =========================
+    if (roll == "1" && cls == "Class 3") {
+        let hindi = 50;
+        let english = 63;
+        let math = 43;
+
+        let total = hindi + english + math;
+        let percent = ((total / 300) * 100).toFixed(2);
+
+        document.getElementById("result").innerHTML = `
+            <div class="info">
+                <b>Student Name :</b> Sameem Sheikh<br>
+                <b>Father's Name :</b> Abdul Sheikh<br>
+                <b>Roll No :</b> 1<br>
+                <b>Class :</b> Class 3
+            </div>
+            <table>
+                <tr><th>Subject</th><th>Marks</th><th>Full Marks</th></tr>
+                <tr><td>Hindi</td><td>${hindi}</td><td>100</td></tr>
+                <tr><td>English</td><td>${english}</td><td>100</td></tr>
+                <tr><td>Mathematics</td><td>${math}</td><td>100</td></tr>
+                <tr><th>Total</th><th>${total}</th><th>300</th></tr>
+                <tr><th colspan="2">Percentage</th><th>${percent}%</th></tr>
+                <tr><th colspan="2">Result</th><th class="pass">PASS</th></tr>
+            </table>
+            <br>
+            <p><b>Class Teacher :</b> Shail Aktar</p>
+            <p><b>Principal :</b> Shail Aktar</p>
+            <button onclick="window.print()">📄 Download / Print Result</button>
+        `;
+    }
+    // =========================
+    // Student 2
+    // =========================
+    else if (roll == "3" && cls.includes("Nursery")) {
+        let hindi = 89;
+        let english = 74;
+        let math = 63;
+        let drawing = 15;
+
+        let total = hindi + english + math + drawing;
+        let percent = ((total / 400) * 100).toFixed(2);
+
+        document.getElementById("result").innerHTML = `
+            <div class="info">
+                <b>Student Name :</b> Simran Khatoon<br>
+                <b>Father's Name :</b> Safi Kulshit<br>
+                <b>Roll No :</b> 3<br>
+                <b>Class :</b> ${cls}
+            </div>
+            <table>
+                <tr><th>Subject</th><th>Marks</th><th>Full Marks</th></tr>
+                <tr><td>Hindi</td><td>${hindi}</td><td>100</td></tr>
+                <tr><td>English</td><td>${english}</td><td>100</td></tr>
+                <tr><td>Mathematics</td><td>${math}</td><td>100</td></tr>
+                <tr><td>Drawing</td><td>${drawing}</td><td>100</td></tr>
+                <tr><th>Total</th><th>${total}</th><th>400</th></tr>
+                <tr><th colspan="2">Percentage</th><th>${percent}%</th></tr>
+                <tr><th colspan="2">Result</th><th class="pass">PASS</th></tr>
+            </table>
+            <br>
+            <button onclick="window.print()">📄 Download / Print Result</button>
+        `;
+    } else {
+        document.getElementById("result").innerHTML = `
+            <h2 style="color:red; text-align:center; margin-top:20px;">Result Not Found</h2>
+        `;
+    }
+}
+
+function openLogin() {
+    document.getElementById("loginBox").style.display = "block";
+}
+
+function closeLogin() {
+    document.getElementById("loginBox").style.display = "none";
+}
+
+function teacherLogin() {
+    let user = document.getElementById("userid").value;
+    let code = document.getElementById("schoolcode").value;
+    let pass = document.getElementById("password").value;
+
+    if (user === "teacher" && code === "SPS2026" && pass === "Smart@123") {
+        alert("Login Successful");
+        window.location.href = "all-results.html";
+    } else {
+        alert("Wrong User ID, School Code or Password");
+    }
+}
+</script>
+
+</body>
+</html>
+
