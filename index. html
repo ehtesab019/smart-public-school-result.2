@@ -4,22 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Public School Aandhar Kotta - Admission Portal</title>
-    <!-- Include html2pdf library for direct PDF generation -->
+    <!-- html2pdf Library for PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --accent-color: #3b82f6;
+            --bg-color: #f0f4f8;
+            --text-color: #333;
+            --border-color: #cbd5e1;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         body {
-            background-color: #f0f4f8;
-            color: #333;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             line-height: 1.6;
             padding: 20px;
         }
-        .container {
+
+        .portal-wrapper {
             max-width: 800px;
             margin: 0 auto;
             background: #ffffff;
@@ -27,50 +37,60 @@
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
-        .header {
+
+        .portal-header {
             text-align: center;
             margin-bottom: 30px;
             border-bottom: 2px solid #e2e8f0;
             padding-bottom: 20px;
         }
-        .school-logo {
+
+        .school-badge {
             width: 80px;
             height: 80px;
             object-fit: contain;
             margin-bottom: 10px;
             border-radius: 50%;
-            border: 2px solid #1e3a8a;
+            border: 2px solid var(--primary-color);
             padding: 2px;
             background: #fff;
+            cursor: pointer;
         }
-        .header h1 {
-            color: #1e3a8a;
+
+        .portal-header h1 {
+            color: var(--primary-color);
             font-size: 26px;
             margin-bottom: 5px;
         }
-        .header p {
+
+        .portal-header p {
             color: #64748b;
             font-size: 14px;
         }
-        .form-section {
+
+        .section-block {
             margin-bottom: 25px;
         }
-        .form-section h3 {
-            color: #1e3a8a;
+
+        .section-block h3 {
+            color: var(--primary-color);
             font-size: 18px;
             margin-bottom: 15px;
-            border-left: 4px solid #3b82f6;
+            border-left: 4px solid var(--accent-color);
             padding-left: 10px;
         }
-        .grid-row {
+
+        .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
             margin-bottom: 15px;
         }
-        .grid-full {
+
+        .form-group {
             margin-bottom: 15px;
         }
+
         label {
             display: block;
             margin-bottom: 6px;
@@ -78,27 +98,31 @@
             color: #334155;
             font-size: 14px;
         }
+
         input, select, textarea {
             width: 100%;
             padding: 10px 14px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 14px;
             transition: all 0.3s ease;
         }
+
         input:focus, select:focus, textarea:focus {
-            border-color: #3b82f6;
+            border-color: var(--accent-color);
             outline: none;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
-        .photo-upload-box {
-            border: 2px dashed #cbd5e1;
+
+        .file-upload-wrapper {
+            border: 2px dashed var(--border-color);
             padding: 15px;
             text-align: center;
             border-radius: 6px;
             background: #f8fafc;
         }
-        .btn-submit {
+
+        .submit-btn {
             background-color: #2563eb;
             color: white;
             padding: 14px 20px;
@@ -111,12 +135,13 @@
             transition: background-color 0.3s ease;
             margin-top: 10px;
         }
-        .btn-submit:hover {
+
+        .submit-btn:hover {
             background-color: #1d4ed8;
         }
 
-        /* Printable / PDF Ticket Styling */
-        #pdf-template {
+        /* Hidden PDF Generation Layout */
+        #receipt-template {
             display: none;
             background: #fff;
             padding: 30px;
@@ -125,23 +150,27 @@
             margin: auto;
             color: #1e293b;
         }
-        .pdf-header {
+
+        .receipt-header {
             text-align: center;
-            border-bottom: 2px solid #1e3a8a;
+            border-bottom: 2px solid var(--primary-color);
             padding-bottom: 15px;
             margin-bottom: 20px;
         }
-        .pdf-logo {
+
+        .receipt-logo {
             width: 60px;
             height: 60px;
             object-fit: contain;
             margin-bottom: 5px;
         }
-        .pdf-header h2 {
-            color: #1e3a8a;
+
+        .receipt-header h2 {
+            color: var(--primary-color);
             font-size: 22px;
         }
-        .pdf-meta {
+
+        .receipt-meta {
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
@@ -151,42 +180,49 @@
             font-weight: 600;
             font-size: 14px;
         }
-        .pdf-body-grid {
+
+        .receipt-body {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 20px;
             margin-bottom: 20px;
         }
-        .pdf-table {
+
+        .info-table {
             width: 100%;
             border-collapse: collapse;
         }
-        .pdf-table th, .pdf-table td {
-            border: 1px solid #cbd5e1;
+
+        .info-table th, .info-table td {
+            border: 1px solid var(--border-color);
             padding: 10px 12px;
             font-size: 13px;
             text-align: left;
         }
-        .pdf-table th {
+
+        .info-table th {
             background-color: #f8fafc;
             color: #475569;
             width: 35%;
         }
-        .pdf-photo-container {
+
+        .candidate-photo-box {
             text-align: center;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--border-color);
             padding: 10px;
             background: #fff;
             border-radius: 6px;
             height: max-content;
         }
-        .pdf-photo-container img {
+
+        .candidate-photo-box img {
             width: 100px;
             height: 120px;
             object-fit: cover;
             border-radius: 4px;
         }
-        .pdf-footer {
+
+        .receipt-footer {
             text-align: center;
             margin-top: 30px;
             font-size: 12px;
@@ -198,20 +234,19 @@
 </head>
 <body>
 
-<div class="container" id="form-container">
-    <div class="header">
-        <!-- School Logo Placeholder / Upload option -->
-        <input type="file" id="schoolLogoInput" accept="image/*" style="display:none;" onchange="previewLogo(event)">
-        <img id="displayLogo" src="https://cdn-icons-png.flaticon.com/512/2942/2942813.png" alt="School Logo" class="school-logo" title="Click to change logo" onclick="document.getElementById('schoolLogoInput').click()" style="cursor: pointer;">
+<div class="portal-wrapper">
+    <div class="portal-header">
+        <input type="file" id="schoolLogoInput" accept="image/*" style="display:none;" onchange="handleLogoChange(event)">
+        <img id="displayLogo" src="https://cdn-icons-png.flaticon.com/512/2942/2942813.png" alt="School Logo" class="school-badge" title="Click to change logo" onclick="document.getElementById('schoolLogoInput').click()">
         <h1>Smart Public School Aandhar Kotta</h1>
         <p>Admission Application Form | Academic Session 2026-2027 (Nursery to Class 3)</p>
     </div>
 
-    <form id="admissionForm" onsubmit="generatePDF(event)">
-        <!-- Section 1: Class Selection -->
-        <div class="form-section">
+    <form id="admissionForm" onsubmit="processAdmissionForm(event)">
+        <!-- Section 1: Admission Details -->
+        <div class="section-block">
             <h3>Admission Details</h3>
-            <div class="grid-row">
+            <div class="form-row">
                 <div>
                     <label for="applyClass">Applying For Class *</label>
                     <select id="applyClass" required>
@@ -231,10 +266,10 @@
             </div>
         </div>
 
-        <!-- Section 2: Student Personal Info -->
-        <div class="form-section">
+        <!-- Section 2: Student Personal Information -->
+        <div class="section-block">
             <h3>Student's Personal Information</h3>
-            <div class="grid-row">
+            <div class="form-row">
                 <div>
                     <label for="firstName">First Name *</label>
                     <input type="text" id="firstName" placeholder="Enter first name" required>
@@ -245,7 +280,7 @@
                 </div>
             </div>
 
-            <div class="grid-row">
+            <div class="form-row">
                 <div>
                     <label for="dob">Date of Birth *</label>
                     <input type="date" id="dob" required>
@@ -261,7 +296,7 @@
                 </div>
             </div>
 
-            <div class="grid-row">
+            <div class="form-row">
                 <div>
                     <label for="bloodGroup">Blood Group</label>
                     <select id="bloodGroup">
@@ -278,17 +313,17 @@
                 </div>
                 <div>
                     <label for="studentPhoto">Upload Student Photograph *</label>
-                    <div class="photo-upload-box">
-                        <input type="file" id="studentPhoto" accept="image/*" required onchange="previewImage(event)">
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="studentPhoto" accept="image/*" required onchange="handleStudentPhoto(event)">
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Section 3: Parent/Guardian Details -->
-        <div class="form-section">
+        <div class="section-block">
             <h3>Parent / Guardian Details</h3>
-            <div class="grid-row">
+            <div class="form-row">
                 <div>
                     <label for="fatherName">Father's Full Name *</label>
                     <input type="text" id="fatherName" placeholder="Enter father's name" required>
@@ -299,7 +334,7 @@
                 </div>
             </div>
 
-            <div class="grid-row">
+            <div class="form-row">
                 <div>
                     <label for="motherName">Mother's Full Name *</label>
                     <input type="text" id="motherName" placeholder="Enter mother's name" required>
@@ -310,7 +345,7 @@
                 </div>
             </div>
 
-            <div class="grid-row">
+            <div class="form-row">
                 <div>
                     <label for="contactNumber">Primary Contact Number *</label>
                     <input type="tel" id="contactNumber" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
@@ -323,13 +358,13 @@
         </div>
 
         <!-- Section 4: Address Details -->
-        <div class="form-section">
+        <div class="section-block">
             <h3>Residential Address</h3>
-            <div class="grid-full">
+            <div class="form-group">
                 <label for="address">Street Address *</label>
                 <textarea id="address" rows="2" placeholder="House No, Street Name, Locality/Area" required></textarea>
             </div>
-            <div class="grid-row">
+            <div class="form-row">
                 <div>
                     <label for="city">City / District *</label>
                     <input type="text" id="city" placeholder="Enter city" required>
@@ -341,26 +376,26 @@
             </div>
         </div>
 
-        <button type="submit" class="btn-submit">Submit Application & Download PDF Receipt</button>
+        <button type="submit" class="submit-btn">Submit Application & Download PDF Receipt</button>
     </form>
 </div>
 
-<!-- Hidden PDF Output Template -->
-<div id="pdf-template">
-    <div class="pdf-header">
-        <img id="pdfLogoPreview" src="https://cdn-icons-png.flaticon.com/512/2942/2942813.png" alt="School Logo" class="pdf-logo">
+<!-- Printable PDF Template Layout -->
+<div id="receipt-template">
+    <div class="receipt-header">
+        <img id="pdfLogoPreview" src="https://cdn-icons-png.flaticon.com/512/2942/2942813.png" alt="School Logo" class="receipt-logo">
         <h2>SMART PUBLIC SCHOOL AANDHAR KOTTA</h2>
         <p>Official Admission Application Receipt (Session 2026-27)</p>
     </div>
 
-    <div class="pdf-meta">
+    <div class="receipt-meta">
         <div>Registration No: <span id="lblRegNo"></span></div>
         <div>Form No: <span id="lblFormNo"></span></div>
         <div>Date: <span id="lblDate"></span></div>
     </div>
 
-    <div class="pdf-body-grid">
-        <table class="pdf-table">
+    <div class="receipt-body">
+        <table class="info-table">
             <tr>
                 <th>Applied Class</th>
                 <td id="lblClass"></td>
@@ -395,23 +430,23 @@
             </tr>
         </table>
         
-        <div class="pdf-photo-container">
+        <div class="candidate-photo-box">
             <img id="lblPhotoPreview" src="" alt="Student Photo">
             <p style="font-size: 11px; margin-top: 5px; color: #64748b;">Candidate Photo</p>
         </div>
     </div>
 
-    <div class="pdf-footer">
+    <div class="receipt-footer">
         <p>This is a computer-generated admission receipt. Please keep this document safe for future admission reference.</p>
         <p>Smart Public School Aandhar Kotta | Contact: +91-XXXXXXXXXX | Email: admissions@smartpublicschool.edu</p>
     </div>
 </div>
 
 <script>
-    let uploadedImageBase64 = "";
+    let studentPhotoBase64 = "";
     let schoolLogoBase64 = "https://cdn-icons-png.flaticon.com/512/2942/2942813.png";
 
-    function previewLogo(event) {
+    function handleLogoChange(event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -424,27 +459,27 @@
         }
     }
 
-    function previewImage(event) {
+    function handleStudentPhoto(event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                uploadedImageBase64 = e.target.result;
+                studentPhotoBase64 = e.target.result;
             }
             reader.readAsDataURL(file);
         }
     }
 
-    function generatePDF(event) {
+    function processAdmissionForm(event) {
         event.preventDefault();
 
-        // Auto generate Form Number and Registration Number
-        const randomNum = Math.floor(100000 + Math.random() * 900000);
-        const regNo = "SPS-AK-2026-" + randomNum;
+        // Generate unique numbers and current date
+        const uniqueId = Math.floor(100000 + Math.random() * 900000);
+        const regNo = "SPS-AK-2026-" + uniqueId;
         const formNo = "FM-" + Math.floor(1000 + Math.random() * 9000);
         const currentDate = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
-        // Populate values into PDF template
+        // Bind form input values to PDF template fields
         document.getElementById('lblRegNo').innerText = regNo;
         document.getElementById('lblFormNo').innerText = formNo;
         document.getElementById('lblDate').innerText = currentDate;
@@ -457,29 +492,29 @@
         document.getElementById('lblMotherName').innerText = document.getElementById('motherName').value;
         document.getElementById('lblContact').innerText = document.getElementById('contactNumber').value;
         
-        const fullAddr = document.getElementById('address').value + ", " + document.getElementById('city').value + " - " + document.getElementById('pincode').value;
-        document.getElementById('lblAddressText').innerText = fullAddr;
+        const fullAddress = document.getElementById('address').value + ", " + document.getElementById('city').value + " - " + document.getElementById('pincode').value;
+        document.getElementById('lblAddressText').innerText = fullAddress;
 
-        if (uploadedImageBase64) {
-            document.getElementById('lblPhotoPreview').src = uploadedImageBase64;
+        if (studentPhotoBase64) {
+            document.getElementById('lblPhotoPreview').src = studentPhotoBase64;
         }
         document.getElementById('pdfLogoPreview').src = schoolLogoBase64;
 
-        // Show template for PDF rendering
-        const pdfElement = document.getElementById('pdf-template');
-        pdfElement.style.display = 'block';
+        // Make receipt container visible for PDF rendering
+        const receiptElement = document.getElementById('receipt-template');
+        receiptElement.style.display = 'block';
 
-        const opt = {
+        const pdfOptions = {
             margin:       10,
-            filename:     'Admission_Form_' + regNo + '.pdf',
+            filename:     'Admission_Receipt_' + regNo + '.pdf',
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // Generate and download PDF, then hide template again
-        html2pdf().from(pdfElement).set(opt).save().then(() => {
-            pdfElement.style.display = 'none';
+        // Trigger PDF download and reset form
+        html2pdf().from(receiptElement).set(pdfOptions).save().then(() => {
+            receiptElement.style.display = 'none';
             alert('Form submitted successfully! Your PDF receipt has been downloaded.');
             document.getElementById('admissionForm').reset();
         });
@@ -487,4 +522,5 @@
 </script>
 
 </body>
-</html> sahhi hai
+</html>
+        
