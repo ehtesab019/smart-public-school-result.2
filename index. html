@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Admission Portal - Nursery to Class 3</title>
+    <title>Smart Public School Aandhar Kotta - Admission Portal</title>
     <!-- Include html2pdf library for direct PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
@@ -33,14 +33,24 @@
             border-bottom: 2px solid #e2e8f0;
             padding-bottom: 20px;
         }
+        .school-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            border: 2px solid #1e3a8a;
+            padding: 2px;
+            background: #fff;
+        }
         .header h1 {
             color: #1e3a8a;
-            font-size: 28px;
+            font-size: 26px;
             margin-bottom: 5px;
         }
         .header p {
             color: #64748b;
-            font-size: 15px;
+            font-size: 14px;
         }
         .form-section {
             margin-bottom: 25px;
@@ -121,9 +131,15 @@
             padding-bottom: 15px;
             margin-bottom: 20px;
         }
+        .pdf-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 5px;
+        }
         .pdf-header h2 {
             color: #1e3a8a;
-            font-size: 24px;
+            font-size: 22px;
         }
         .pdf-meta {
             display: flex;
@@ -184,7 +200,10 @@
 
 <div class="container" id="form-container">
     <div class="header">
-        <h1>Global Public School</h1>
+        <!-- School Logo Placeholder / Upload option -->
+        <input type="file" id="schoolLogoInput" accept="image/*" style="display:none;" onchange="previewLogo(event)">
+        <img id="displayLogo" src="https://cdn-icons-png.flaticon.com/512/2942/2942813.png" alt="School Logo" class="school-logo" title="Click to change logo" onclick="document.getElementById('schoolLogoInput').click()" style="cursor: pointer;">
+        <h1>Smart Public School Aandhar Kotta</h1>
         <p>Admission Application Form | Academic Session 2026-2027 (Nursery to Class 3)</p>
     </div>
 
@@ -329,7 +348,8 @@
 <!-- Hidden PDF Output Template -->
 <div id="pdf-template">
     <div class="pdf-header">
-        <h2>GLOBAL PUBLIC SCHOOL</h2>
+        <img id="pdfLogoPreview" src="https://cdn-icons-png.flaticon.com/512/2942/2942813.png" alt="School Logo" class="pdf-logo">
+        <h2>SMART PUBLIC SCHOOL AANDHAR KOTTA</h2>
         <p>Official Admission Application Receipt (Session 2026-27)</p>
     </div>
 
@@ -383,12 +403,26 @@
 
     <div class="pdf-footer">
         <p>This is a computer-generated admission receipt. Please keep this document safe for future admission reference.</p>
-        <p>Global Public School | Contact: +91-XXXXXXXXXX | Email: admissions@globalpublicschool.edu</p>
+        <p>Smart Public School Aandhar Kotta | Contact: +91-XXXXXXXXXX | Email: admissions@smartpublicschool.edu</p>
     </div>
 </div>
 
 <script>
     let uploadedImageBase64 = "";
+    let schoolLogoBase64 = "https://cdn-icons-png.flaticon.com/512/2942/2942813.png";
+
+    function previewLogo(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                schoolLogoBase64 = e.target.result;
+                document.getElementById('displayLogo').src = schoolLogoBase64;
+                document.getElementById('pdfLogoPreview').src = schoolLogoBase64;
+            }
+            reader.readAsDataURL(file);
+        }
+    }
 
     function previewImage(event) {
         const file = event.target.files[0];
@@ -399,3 +433,58 @@
             }
             reader.readAsDataURL(file);
         }
+    }
+
+    function generatePDF(event) {
+        event.preventDefault();
+
+        // Auto generate Form Number and Registration Number
+        const randomNum = Math.floor(100000 + Math.random() * 900000);
+        const regNo = "SPS-AK-2026-" + randomNum;
+        const formNo = "FM-" + Math.floor(1000 + Math.random() * 9000);
+        const currentDate = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        // Populate values into PDF template
+        document.getElementById('lblRegNo').innerText = regNo;
+        document.getElementById('lblFormNo').innerText = formNo;
+        document.getElementById('lblDate').innerText = currentDate;
+        
+        document.getElementById('lblClass').innerText = document.getElementById('applyClass').value;
+        document.getElementById('lblStudentName').innerText = document.getElementById('firstName').value + " " + document.getElementById('lastName').value;
+        document.getElementById('lblDob').innerText = document.getElementById('dob').value;
+        document.getElementById('lblGender').innerText = document.getElementById('gender').value;
+        document.getElementById('lblFatherName').innerText = document.getElementById('fatherName').value;
+        document.getElementById('lblMotherName').innerText = document.getElementById('motherName').value;
+        document.getElementById('lblContact').innerText = document.getElementById('contactNumber').value;
+        
+        const fullAddr = document.getElementById('address').value + ", " + document.getElementById('city').value + " - " + document.getElementById('pincode').value;
+        document.getElementById('lblAddressText').innerText = fullAddr;
+
+        if (uploadedImageBase64) {
+            document.getElementById('lblPhotoPreview').src = uploadedImageBase64;
+        }
+        document.getElementById('pdfLogoPreview').src = schoolLogoBase64;
+
+        // Show template for PDF rendering
+        const pdfElement = document.getElementById('pdf-template');
+        pdfElement.style.display = 'block';
+
+        const opt = {
+            margin:       10,
+            filename:     'Admission_Form_' + regNo + '.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Generate and download PDF, then hide template again
+        html2pdf().from(pdfElement).set(opt).save().then(() => {
+            pdfElement.style.display = 'none';
+            alert('Form submitted successfully! Your PDF receipt has been downloaded.');
+            document.getElementById('admissionForm').reset();
+        });
+    }
+</script>
+
+</body>
+</html> sahhi hai
