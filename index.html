@@ -1,0 +1,2663 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GyanPath - Free All-in-One Education Platform (Class 1 to 12)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            },
+            accent: {
+              500: '#8b5cf6',
+              600: '#7c3aed',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom scrollbars & smooth transitions */
+    * {
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.03);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #a5b4fc;
+      border-radius: 999px;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+    }
+    .dark .glass-card {
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(12px);
+    }
+    .badge-pulse {
+      animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 0.4; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-note-area, #printable-note-area * {
+        visibility: visible;
+      }
+      #printable-note-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans selection:bg-brand-500 selection:text-white">
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-3">
+        
+        <!-- Logo & Mission Badge -->
+        <div class="flex items-center gap-3">
+          <button onclick="navigate('home')" class="flex items-center gap-2 group text-left">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-accent-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
+              <i class="fa-solid fa-graduation-cap text-lg"></i>
+            </div>
+            <div>
+              <span class="font-heading font-extrabold text-xl tracking-tight bg-gradient-to-r from-brand-600 via-indigo-600 to-accent-600 bg-clip-text text-transparent">GyanPath</span>
+              <span class="hidden sm:inline-block text-[10px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800 ml-1.5">100% Free</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Global Selectors (Class, Board) -->
+        <div class="hidden lg:flex items-center gap-2 text-xs">
+          <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
+            <span class="text-slate-400 px-2 font-medium">Class:</span>
+            <select id="globalClassSelector" onchange="updateGlobalSelection()" class="bg-transparent font-semibold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer pr-1">
+              <!-- populated in js -->
+            </select>
+          </div>
+          <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
+            <span class="text-slate-400 px-2 font-medium">Board:</span>
+            <select id="globalBoardSelector" onchange="updateGlobalSelection()" class="bg-transparent font-semibold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer pr-1">
+              <option value="CBSE">CBSE</option>
+              <option value="ICSE">ICSE</option>
+              <option value="State Board">State Board</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Global Navigation Items -->
+        <nav class="hidden md:flex items-center gap-1 font-medium text-sm">
+          <button onclick="navigate('home')" class="nav-link px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200" data-page="home">Home</button>
+          <button onclick="navigate('study')" class="nav-link px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200" data-page="study">Study Notes</button>
+          <button onclick="navigate('exam')" class="nav-link px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200" data-page="exam">Tests & Quizzes</button>
+          <button onclick="navigate('ai')" class="nav-link px-3 py-2 rounded-lg hover:bg-brand-50 dark:hover:bg-brand-950/40 text-brand-600 dark:text-brand-400 font-semibold" data-page="ai"><i class="fa-solid fa-sparkles text-amber-500 mr-1.5"></i>AI Assistant</button>
+          <button onclick="navigate('doubts')" class="nav-link px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200" data-page="doubts">Live Doubts</button>
+        </nav>
+
+        <!-- Right Side Utility Controls & Role Switcher -->
+        <div class="flex items-center gap-2">
+          
+          <!-- Theme Switcher -->
+          <button onclick="toggleTheme()" class="w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800" title="Toggle Dark/Light Mode">
+            <i id="themeIcon" class="fa-solid fa-moon"></i>
+          </button>
+
+          <!-- Hindi/English Selector -->
+          <button onclick="toggleLanguage()" id="langToggleBtn" class="text-xs px-2.5 py-1.5 font-bold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700" title="Switch Language">
+            EN
+          </button>
+
+          <!-- Active Role Selector Pill / Login -->
+          <div class="relative">
+            <button id="roleDropdownBtn" onclick="toggleRoleMenu()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 hover:bg-brand-100">
+              <span id="currentRoleBadge" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span id="currentRoleLabel">Student Demo</span>
+              <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
+            </button>
+            <!-- Dropdown Menu -->
+            <div id="roleMenu" class="hidden absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 z-50 text-xs">
+              <div class="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Switch Portal Role</div>
+              <button onclick="switchRole('student')" class="w-full text-left px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-between">
+                <span class="flex items-center gap-2"><i class="fa-solid fa-user-graduate text-blue-500"></i> Student Portal</span>
+                <span class="text-[10px] bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-slate-500">Active</span>
+              </button>
+              <button onclick="switchRole('teacher')" class="w-full text-left px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-chalkboard-user text-purple-500"></i> Teacher Desk
+              </button>
+              <button onclick="switchRole('parent')" class="w-full text-left px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-people-roof text-amber-500"></i> Parent Portal
+              </button>
+              <button onclick="switchRole('admin')" class="w-full text-left px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-emerald-500"></i> Admin Command
+              </button>
+              <div class="border-t border-slate-100 dark:border-slate-700 my-1"></div>
+              <button onclick="openModal('backupModal')" class="w-full text-left px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                <i class="fa-solid fa-database text-cyan-500"></i> Backup & Data Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Mobile Hamburger -->
+          <button onclick="toggleMobileNav()" class="md:hidden w-9 h-9 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <i class="fa-solid fa-bars text-lg"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobileNav" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 space-y-2 text-sm font-medium">
+      <div class="grid grid-cols-2 gap-2 mb-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <label class="text-[11px] text-slate-400">Class</label>
+          <select id="mobileClassSelector" onchange="updateMobileSelection()" class="w-full mt-1 bg-slate-100 dark:bg-slate-800 text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700"></select>
+        </div>
+        <div>
+          <label class="text-[11px] text-slate-400">Board</label>
+          <select id="mobileBoardSelector" onchange="updateMobileSelection()" class="w-full mt-1 bg-slate-100 dark:bg-slate-800 text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700">
+            <option value="CBSE">CBSE</option>
+            <option value="ICSE">ICSE</option>
+            <option value="State Board">State Board</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="navigate('home'); toggleMobileNav();" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Home</button>
+      <button onclick="navigate('study'); toggleMobileNav();" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Study Notes & Materials</button>
+      <button onclick="navigate('exam'); toggleMobileNav();" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Practice Exam Arena</button>
+      <button onclick="navigate('ai'); toggleMobileNav();" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-brand-600 font-semibold"><i class="fa-solid fa-sparkles mr-2 text-amber-500"></i>AI Study Assistant</button>
+      <button onclick="navigate('doubts'); toggleMobileNav();" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Live 1-on-1 Doubts</button>
+      <div class="border-t border-slate-100 dark:border-slate-800 pt-2 font-bold text-xs text-slate-400">ROLE DASHBOARDS</div>
+      <button onclick="switchRole('student'); toggleMobileNav();" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-blue-600">Student Dashboard</button>
+      <button onclick="switchRole('teacher'); toggleMobileNav();" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-purple-600">Teacher Dashboard</button>
+      <button onclick="switchRole('parent'); toggleMobileNav();" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-600">Parent Portal</button>
+      <button onclick="switchRole('admin'); toggleMobileNav();" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-emerald-600">Admin Command Center</button>
+    </div>
+  </header>
+
+  <!-- ================= NOTIFICATION TOAST CONTAINER ================= -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+  <!-- ================= MAIN CONTAINER (SPA ROUTER VIEWS) ================= -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- 1. VIEW: LANDING / HOME -->
+    <section id="view-home" class="page-view space-y-12">
+      <!-- Hero Section -->
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-900 via-indigo-900 to-slate-900 text-white p-8 sm:p-12 shadow-2xl">
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-accent-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-brand-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 max-w-3xl space-y-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-brand-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            India's Free Mission: No Child Left Behind
+          </div>
+          <h1 class="font-heading font-extrabold text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-tight">
+            High-Quality Coaching, <br><span class="bg-gradient-to-r from-amber-300 via-indigo-200 to-teal-300 bg-clip-text text-transparent">Completely Free For Everyone.</span>
+          </h1>
+          <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl">
+            Empowering students from <strong>Class 1 to Class 12</strong> across CBSE, ICSE, and State Boards. Get comprehensive chapter notes, self-correcting CBT tests, AI doubt answers, and dedicated mentor support.
+          </p>
+          <div class="flex flex-wrap gap-3 pt-2">
+            <button onclick="navigate('study')" class="px-6 py-3.5 bg-gradient-to-r from-brand-500 to-indigo-600 hover:from-brand-600 hover:to-indigo-700 font-semibold text-sm rounded-xl shadow-lg shadow-brand-500/30 hover:shadow-xl transition-all flex items-center gap-2">
+              <i class="fa-solid fa-book-open"></i> Start Learning Now
+            </button>
+            <button onclick="navigate('exam')" class="px-6 py-3.5 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 font-semibold text-sm rounded-xl transition-all flex items-center gap-2">
+              <i class="fa-solid fa-pen-nib"></i> Take Practice Tests
+            </button>
+            <button onclick="openModal('scholarshipModal')" class="px-5 py-3.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-300 font-semibold text-sm rounded-xl transition-all flex items-center gap-2">
+              <i class="fa-solid fa-hand-holding-heart"></i> Apply for Mentorship Aid
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Class Picker (1 to 12) -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-heading font-bold text-xl sm:text-2xl">Select Your Grade</h2>
+            <p class="text-xs sm:text-sm text-slate-500">Pick any class to jump straight into tailored syllabus and study materials.</p>
+          </div>
+          <span class="text-xs text-brand-600 dark:text-brand-400 font-semibold cursor-pointer" onclick="navigate('study')">View All Materials &rarr;</span>
+        </div>
+        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2 sm:gap-3" id="classGridContainer">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Core Features Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+          <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl mb-4">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <h3 class="font-heading font-bold text-lg mb-2">Curated Chapter Notes</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Summaries, formula sheets, key definitions, and practice questions created by experienced teachers.</p>
+          <button onclick="navigate('study')" class="text-xs font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1 hover:underline">Explore Notes <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+          <div class="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl mb-4">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+          <h3 class="font-heading font-bold text-lg mb-2">AI Study Assistant</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Instant age-appropriate explanations, math step-by-step guidance, and Hindi/English support built right in.</p>
+          <button onclick="navigate('ai')" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 flex items-center gap-1 hover:underline">Ask Doubt Now <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+          <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl mb-4">
+            <i class="fa-solid fa-stopwatch-20"></i>
+          </div>
+          <h3 class="font-heading font-bold text-lg mb-2">Online CBT Practice Exams</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Timed mock tests, question palettes, automated scoring, answer explanations, and weak-topic analysis.</p>
+          <button onclick="navigate('exam')" class="text-xs font-semibold text-purple-600 dark:text-purple-400 flex items-center gap-1 hover:underline">Start Test <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+        </div>
+      </div>
+
+      <!-- Trust & Educational Mission Banner -->
+      <div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-slate-800 dark:to-slate-800/80 rounded-2xl p-6 sm:p-8 border border-emerald-200 dark:border-emerald-800/50 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div class="space-y-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Zero Cost Educational Initiative</span>
+          <h4 class="font-heading font-bold text-xl text-slate-800 dark:text-slate-100">Are you a student unable to afford costly coaching?</h4>
+          <p class="text-sm text-slate-600 dark:text-slate-300 max-w-xl">GyanPath is dedicated to democratizing quality learning across all 28 states and territories. Free forever, no paywalls, completely accessible.</p>
+        </div>
+        <button onclick="openModal('scholarshipModal')" class="shrink-0 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md">
+          Request Study Support
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. VIEW: STUDY MATERIALS & NOTES -->
+    <section id="view-study" class="page-view hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <h2 class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100">Study Materials & Notes</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Filter chapter-wise notes, formula guides, and question sets.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="relative">
+            <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+            <input type="text" id="noteSearchInput" oninput="filterNotes()" placeholder="Search topics, formulas..." class="pl-8 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+          </div>
+          <select id="studySubjectFilter" onchange="filterNotes()" class="text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+            <option value="ALL">All Subjects</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Science">Science / EVS</option>
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Biology">Biology</option>
+            <option value="Social Science">Social Science</option>
+            <option value="English">English</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Computer Science">Computer Science</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Notes Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="notesListContainer">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- 3. VIEW: NOTE DETAIL / PRINTABLE READER -->
+    <section id="view-note-reader" class="page-view hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <button onclick="navigate('study')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-1.5">
+          <i class="fa-solid fa-arrow-left"></i> Back to Materials
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-300 border border-brand-200 dark:border-brand-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-print"></i> Print / PDF
+          </button>
+          <button id="readerBookmarkBtn" onclick="toggleCurrentNoteBookmark()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 flex items-center gap-1.5">
+            <i class="fa-regular fa-bookmark"></i> Bookmark
+          </button>
+        </div>
+      </div>
+
+      <!-- Printable note container -->
+      <article id="printable-note-area" class="glass-card p-6 sm:p-10 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6">
+        <div class="border-b border-slate-200 dark:border-slate-700 pb-4">
+          <div class="flex flex-wrap items-center gap-2 text-xs font-semibold text-brand-600 dark:text-brand-400 mb-2">
+            <span id="readerClassBadge" class="bg-brand-50 dark:bg-brand-950/60 px-2 py-0.5 rounded"></span>
+            <span id="readerBoardBadge" class="bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded"></span>
+            <span id="readerSubjectBadge" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded"></span>
+          </div>
+          <h1 id="readerTitle" class="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 dark:text-slate-100"></h1>
+          <p id="readerChapter" class="text-xs sm:text-sm text-slate-500 mt-1"></p>
+        </div>
+
+        <div id="readerContentBody" class="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed space-y-4 text-sm sm:text-base">
+          <!-- Populated by JS -->
+        </div>
+      </article>
+    </section>
+
+    <!-- 4. VIEW: ONLINE PRACTICE EXAM / TEST ARENA -->
+    <section id="view-exam" class="page-view hidden space-y-6">
+      
+      <!-- Exam Selector / Listing Mode -->
+      <div id="examListingMode" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <h2 class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100">Practice Exam Arena</h2>
+            <p class="text-xs sm:text-sm text-slate-500">Self-timed mock tests with instant auto-grading and topic analysis.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-medium text-slate-500">Filter By Subject:</span>
+            <select id="examSubjectFilter" onchange="renderExamList()" class="text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+              <option value="ALL">All Subjects</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Science">Science</option>
+              <option value="Physics">Physics</option>
+              <option value="English">English</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="examCardGrid">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Active Interactive CBT Screen -->
+      <div id="activeTestMode" class="hidden space-y-6">
+        <!-- Top status bar with countdown timer -->
+        <div class="glass-card p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4 shadow-sm">
+          <div>
+            <h3 id="cbtTestTitle" class="font-heading font-bold text-base text-slate-900 dark:text-slate-100"></h3>
+            <span id="cbtSubjectBadge" class="text-xs text-brand-600 dark:text-brand-400 font-medium"></span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 px-3 py-1.5 rounded-xl font-mono text-sm font-bold">
+              <i class="fa-regular fa-clock"></i>
+              <span id="cbtTimerDisplay">15:00</span>
+            </div>
+            <button onclick="confirmSubmitTest()" class="px-4 py-1.5 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">
+              Submit Test
+            </button>
+          </div>
+        </div>
+
+        <!-- Question & Palette Split View -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Question Pane (8 cols) -->
+          <div class="lg:col-span-8 glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between min-h-[380px]">
+            <div>
+              <div class="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">
+                <span id="cbtQuestionNumber" class="text-xs font-bold uppercase text-slate-400">Question 1 of 5</span>
+                <button onclick="toggleMarkForReview()" id="markReviewBtn" class="text-xs font-semibold px-2.5 py-1 rounded bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900 flex items-center gap-1">
+                  <i class="fa-regular fa-flag"></i> Mark for Review
+                </button>
+              </div>
+
+              <!-- Question text -->
+              <h4 id="cbtQuestionPrompt" class="font-medium text-base sm:text-lg mb-6 text-slate-800 dark:text-slate-100 leading-relaxed"></h4>
+
+              <!-- Options container -->
+              <div id="cbtOptionsContainer" class="space-y-3">
+                <!-- Radio options injected dynamically -->
+              </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-slate-800 mt-6">
+              <button onclick="prevCbtQuestion()" id="cbtPrevBtn" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 disabled:opacity-40">
+                &larr; Previous
+              </button>
+              <button onclick="clearCurrentAnswer()" class="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                Clear Response
+              </button>
+              <button onclick="nextCbtQuestion()" id="cbtNextBtn" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 text-white hover:bg-brand-700">
+                Next &rarr;
+              </button>
+            </div>
+          </div>
+
+          <!-- Question Palette Pane (4 cols) -->
+          <div class="lg:col-span-4 glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <h4 class="font-heading font-bold text-sm text-slate-800 dark:text-slate-200">Question Palette</h4>
+            
+            <!-- Legend -->
+            <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-500 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-500"></span> Answered</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-400"></span> Marked Review</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-200 dark:bg-slate-700"></span> Not Answered</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded border-2 border-brand-500"></span> Current</span>
+            </div>
+
+            <!-- Palette Buttons Grid -->
+            <div id="cbtPaletteGrid" class="grid grid-cols-5 gap-2">
+              <!-- Dynamically populated buttons -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Test Scorecard / Result Screen -->
+      <div id="examResultMode" class="hidden space-y-6">
+        <div class="glass-card p-8 rounded-3xl border border-slate-200 dark:border-slate-800 text-center max-w-2xl mx-auto space-y-6">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center text-3xl mx-auto shadow-inner">
+            <i class="fa-solid fa-trophy"></i>
+          </div>
+          <div>
+            <h3 class="font-heading font-extrabold text-2xl sm:text-3xl">Test Completed!</h3>
+            <p id="resultTestTitle" class="text-sm text-slate-500 mt-1"></p>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <span class="text-xs text-slate-400">Score</span>
+              <div id="resultScore" class="font-heading font-bold text-2xl text-brand-600">--/--</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <span class="text-xs text-slate-400">Accuracy</span>
+              <div id="resultAccuracy" class="font-heading font-bold text-2xl text-emerald-600">--%</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <span class="text-xs text-slate-400">Time Taken</span>
+              <div id="resultTimeTaken" class="font-heading font-bold text-2xl text-slate-700 dark:text-slate-200">--:--</div>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-blue-50 dark:bg-slate-800 text-left border border-blue-100 dark:border-slate-700 text-xs space-y-1">
+            <span class="font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Analysis & Weak Areas:</span>
+            <p id="resultAnalysisText" class="text-slate-600 dark:text-slate-300"></p>
+          </div>
+
+          <div class="flex items-center justify-center gap-3">
+            <button onclick="exitExamMode()" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-semibold text-xs hover:bg-slate-200">
+              Back to Tests
+            </button>
+            <button onclick="switchRole('student')" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs shadow-md">
+              View Student Dashboard &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Explanations List -->
+        <div class="max-w-3xl mx-auto space-y-4">
+          <h4 class="font-heading font-bold text-lg">Detailed Question Explanations</h4>
+          <div id="resultExplanationsContainer" class="space-y-3">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 5. VIEW: AI STUDY ASSISTANT -->
+    <section id="view-ai" class="page-view hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-500 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-md border border-amber-200 dark:border-amber-900 mb-1">
+            <i class="fa-solid fa-sparkles"></i> GyanPath AI Assistant
+          </div>
+          <h2 class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100">Smart Academic Mentor</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Ask any question across Science, Math, or Social Studies. (Offline smart-rules active. API-key ready)</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openModal('aiConfigModal')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-sliders"></i> AI Settings
+          </button>
+          <button onclick="clearAiChat()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-500 flex items-center gap-1.5">
+            <i class="fa-solid fa-trash-can"></i> Clear Chat
+          </button>
+        </div>
+      </div>
+
+      <!-- Mode selection chips -->
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <span class="text-slate-400 font-medium">Explain as:</span>
+        <button onclick="setAiMode('simple')" class="ai-mode-pill px-3 py-1 rounded-full border border-brand-500 bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-300 font-medium" data-mode="simple">
+          👶 Simple (Kids/Basic)
+        </button>
+        <button onclick="setAiMode('stepbystep')" class="ai-mode-pill px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium" data-mode="stepbystep">
+          📐 Step-by-Step Math
+        </button>
+        <button onclick="setAiMode('detailed')" class="ai-mode-pill px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium" data-mode="detailed">
+          🔬 Detailed Scientific
+        </button>
+        <button onclick="setAiMode('summary')" class="ai-mode-pill px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium" data-mode="summary">
+          📝 Revision Summary
+        </button>
+      </div>
+
+      <!-- Chat Interface -->
+      <div class="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col h-[520px]">
+        <!-- Chat message thread -->
+        <div id="aiChatThread" class="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Quick Prompt Chips -->
+        <div class="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2 overflow-x-auto text-[11px] whitespace-nowrap">
+          <span class="text-slate-400"><i class="fa-regular fa-lightbulb"></i> Try:</span>
+          <button onclick="triggerQuickPrompt('Explain photosynthesis with formula')" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-100">🌿 Photosynthesis</button>
+          <button onclick="triggerQuickPrompt('How to solve quadratic equation ax^2 + bx + c = 0')" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-100">📐 Quadratic Formula</button>
+          <button onclick="triggerQuickPrompt('Explain Newton\'s three laws of motion with daily examples')" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-100">🚀 Newton Laws</button>
+          <button onclick="triggerQuickPrompt('प्रकाश संश्लेषण क्या है? हिंदी में समझाइए')" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-100">🇮🇳 विज्ञान (Hindi)</button>
+        </div>
+
+        <!-- Input Box -->
+        <form onsubmit="handleAiSubmit(event)" class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2">
+          <input type="text" id="aiUserInput" placeholder="Type your doubt or academic topic here..." class="flex-1 bg-slate-100 dark:bg-slate-800 text-sm px-4 py-2.5 rounded-xl border border-transparent focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none">
+          <button type="submit" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-xs shadow-md flex items-center gap-1.5 transition-all">
+            <span>Send</span>
+            <i class="fa-solid fa-paper-plane text-[10px]"></i>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 6. VIEW: LIVE DOUBT BOOKING & WEBRTC ROOM SIMULATOR -->
+    <section id="view-doubts" class="page-view hidden space-y-6">
+      <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+        <h2 class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100">Live 1-on-1 Doubt Solving</h2>
+        <p class="text-xs sm:text-sm text-slate-500">Book free mentorship slots or simulate an instant peer-to-peer query room.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Booking form (5 cols) -->
+        <div class="lg:col-span-5 glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+          <h3 class="font-heading font-bold text-base text-slate-800 dark:text-slate-200 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-plus text-brand-600"></i> Request Live Session
+          </h3>
+          <form onsubmit="handleDoubtBooking(event)" class="space-y-3 text-xs">
+            <div>
+              <label class="font-semibold text-slate-600 dark:text-slate-300">Subject</label>
+              <select id="doubtSubject" class="w-full mt-1 p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                <option value="Mathematics">Mathematics</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Biology">Biology</option>
+              </select>
+            </div>
+            <div>
+              <label class="font-semibold text-slate-600 dark:text-slate-300">Preferred Mentor</label>
+              <select id="doubtTeacher" class="w-full mt-1 p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                <option value="Prof. Arvind Sharma (IIT-D)">Prof. Arvind Sharma (Maths Specialist)</option>
+                <option value="Dr. Meenakshi Sundaram">Dr. Meenakshi Sundaram (Science & Biology)</option>
+                <option value="Ms. Shalini Verma">Ms. Shalini Verma (Physics Faculty)</option>
+              </select>
+            </div>
+            <div>
+              <label class="font-semibold text-slate-600 dark:text-slate-300">Describe Your Question</label>
+              <textarea id="doubtText" rows="3" required placeholder="e.g. Need help proving trigonometric identity for cos(2x)..." class="w-full mt-1 p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"></textarea>
+            </div>
+            <div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center">
+              <i class="fa-solid fa-cloud-arrow-up text-slate-400 text-lg mb-1"></i>
+              <p class="text-[11px] text-slate-500">Attach question photo or diagram (Simulated)</p>
+              <input type="file" id="doubtAttachment" class="text-[10px] text-slate-400 mt-1 cursor-pointer">
+            </div>
+            <button type="submit" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold shadow-sm transition-all">
+              Submit Doubt to Queue
+            </button>
+          </form>
+        </div>
+
+        <!-- Live Queue & Simulated Room (7 cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          <!-- Simulated Video / Whiteboard Room -->
+          <div class="glass-card rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+            <div class="bg-slate-900 text-white p-3 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 badge-pulse"></span>
+                <span class="font-semibold">Simulated Live Room #GP-204</span>
+              </div>
+              <span class="text-slate-400 font-mono">Status: Connected</span>
+            </div>
+            <!-- Canvas whiteboard -->
+            <div class="relative bg-slate-950 h-56 flex flex-col items-center justify-center p-4 text-center">
+              <div class="w-14 h-14 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center text-slate-300 mb-2">
+                <i class="fa-solid fa-chalkboard-user text-2xl"></i>
+              </div>
+              <p class="text-xs text-slate-300 font-medium">Mentor: Dr. Meenakshi Sundaram</p>
+              <p class="text-[11px] text-slate-500 max-w-sm mt-1">Live audio-video channel simulation ready. Whiteboard sync enabled for current active doubts.</p>
+              <div class="mt-3 flex items-center gap-2">
+                <button onclick="showToast('Microphone toggled (Simulated)', 'info')" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-white text-xs"><i class="fa-solid fa-microphone"></i></button>
+                <button onclick="showToast('Camera toggled (Simulated)', 'info')" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-white text-xs"><i class="fa-solid fa-video"></i></button>
+                <button onclick="showToast('Whiteboard screen shared (Simulated)', 'info')" class="w-8 h-8 rounded-full bg-brand-600 hover:bg-brand-700 text-white text-xs"><i class="fa-solid fa-desktop"></i></button>
+              </div>
+            </div>
+            <!-- Recent Room Messages -->
+            <div id="doubtChatLog" class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 text-xs space-y-1.5 max-h-32 overflow-y-auto">
+              <div class="text-slate-400 italic text-[11px]">[System]: Live room initialized with end-to-end encryption simulation.</div>
+              <div><strong class="text-brand-600">Dr. Meenakshi:</strong> Hello! Please submit your question from the left form or send it here.</div>
+            </div>
+          </div>
+
+          <!-- Pending doubt queue list -->
+          <div class="glass-card p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+            <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-400">My Submitted Doubts</h4>
+            <div id="doubtsQueueList" class="space-y-2">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. VIEW: STUDENT DASHBOARD -->
+    <section id="view-student" class="page-view hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center text-xl font-bold font-heading">
+            AS
+          </div>
+          <div>
+            <h2 class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100">Welcome back, Aarav Sharma!</h2>
+            <p class="text-xs sm:text-sm text-slate-500"><span id="dashClassLabel">Class 10</span> &bull; <span id="dashBoardLabel">CBSE</span> &bull; Daily Study Streak: <strong class="text-amber-500">🔥 7 Days</strong></p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="downloadCertificate()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-award"></i> Claim Certificate
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400 font-medium">Course Progress</span>
+          <div class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100 mt-1">68%</div>
+          <div class="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full mt-2 overflow-hidden">
+            <div class="bg-brand-600 h-full rounded-full" style="width: 68%"></div>
+          </div>
+        </div>
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400 font-medium">Tests Attempted</span>
+          <div id="dashTestCount" class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100 mt-1">4 Tests</div>
+          <span class="text-[11px] text-emerald-600 font-semibold">+2 completed this week</span>
+        </div>
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400 font-medium">Average Score</span>
+          <div id="dashAvgScore" class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100 mt-1">82%</div>
+          <span class="text-[11px] text-slate-400">Class percentile: Top 15%</span>
+        </div>
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400 font-medium">Bookmarks Saved</span>
+          <div id="dashBookmarkCount" class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100 mt-1">3 Notes</div>
+          <span class="text-[11px] text-indigo-500 font-semibold cursor-pointer" onclick="navigate('study')">Review saved notes &rarr;</span>
+        </div>
+      </div>
+
+      <!-- Split Columns: Progress / Weak Topics & Timetable -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Weak Topics & Recent Test History (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+          <!-- Weak Topic Analysis -->
+          <div class="glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-heading font-bold text-base text-slate-800 dark:text-slate-200">Weak Topics & Improvement Focus</h3>
+              <span class="text-xs bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded font-semibold">AI Powered</span>
+            </div>
+            <div class="space-y-3">
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="font-medium">Trigonometric Identities (Maths)</span>
+                  <span class="text-rose-500 font-bold">52% Accuracy</span>
+                </div>
+                <div class="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                  <div class="bg-rose-500 h-full rounded-full" style="width: 52%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="font-medium">Ray Optics & Refraction (Physics)</span>
+                  <span class="text-amber-500 font-bold">64% Accuracy</span>
+                </div>
+                <div class="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                  <div class="bg-amber-500 h-full rounded-full" style="width: 64%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="font-medium">Chemical Equations Balancing (Chemistry)</span>
+                  <span class="text-emerald-500 font-bold">88% Accuracy</span>
+                </div>
+                <div class="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                  <div class="bg-emerald-500 h-full rounded-full" style="width: 88%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Test Attempt History -->
+          <div class="glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <h3 class="font-heading font-bold text-base text-slate-800 dark:text-slate-200">Recent Exam Attempts</h3>
+            <div id="studentTestHistoryTable" class="overflow-x-auto">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Daily Goals & Timetable (5 cols) -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <h3 class="font-heading font-bold text-base text-slate-800 dark:text-slate-200">Daily Study Planner</h3>
+            <div class="space-y-2 text-xs">
+              <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 cursor-pointer">
+                <input type="checkbox" checked class="rounded text-brand-600">
+                <span class="line-through text-slate-400">Read Chapter 3 Notes: Quadratic Equations</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 cursor-pointer">
+                <input type="checkbox" class="rounded text-brand-600">
+                <span>Attempt Physics Mechanics Diagnostic Quiz (15 mins)</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 cursor-pointer">
+                <input type="checkbox" class="rounded text-brand-600">
+                <span>Ask AI Assistant to explain Photosynthesis dark reaction</span>
+              </label>
+            </div>
+            <button onclick="showToast('Daily goal added!', 'success')" class="w-full py-2 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-500 hover:bg-slate-50">
+              + Add Custom Study Goal
+            </button>
+          </div>
+
+          <div class="glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+            <h3 class="font-heading font-bold text-base text-slate-800 dark:text-slate-200">Recommended Live Class</h3>
+            <div class="p-3 bg-brand-50 dark:bg-brand-950/40 rounded-xl border border-brand-100 dark:border-brand-900 text-xs space-y-2">
+              <span class="font-bold text-brand-700 dark:text-brand-300">Live Doubt Clearing: Class 10 Trigonometry</span>
+              <p class="text-slate-600 dark:text-slate-400">Hosted by Prof. Arvind Sharma. Today at 5:00 PM IST.</p>
+              <button onclick="navigate('doubts')" class="px-3 py-1.5 rounded-lg bg-brand-600 text-white font-semibold">Join Live Room</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 8. VIEW: TEACHER DASHBOARD -->
+    <section id="view-teacher" class="page-view hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">Teacher Panel</span>
+          <h2 class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100">Faculty Desk: Dr. Meenakshi Sundaram</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Assigned: Class 9 &amp; 10 &bull; Science &amp; Biology</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openModal('addNoteModal')" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold shadow-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Chapter Note
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400">Pending Student Doubts</span>
+          <div class="font-heading font-bold text-2xl text-purple-600 mt-1" id="teacherPendingDoubts">2 Queries</div>
+          <span class="text-[11px] text-slate-500">Review queue in Doubts tab</span>
+        </div>
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400">Published Resources</span>
+          <div class="font-heading font-bold text-2xl text-slate-800 dark:text-slate-100 mt-1">12 Notes</div>
+          <span class="text-[11px] text-emerald-600">Available to 340+ students</span>
+        </div>
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400">Next Scheduled Session</span>
+          <div class="font-heading font-bold text-lg text-slate-800 dark:text-slate-100 mt-1">Today, 5:00 PM</div>
+          <span class="text-[11px] text-slate-500">Class 10 Live Doubt Clearing</span>
+        </div>
+      </div>
+
+      <!-- Doubts Queue for Teacher -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+        <h3 class="font-heading font-bold text-base">Incoming Doubts from Students</h3>
+        <div class="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+          <div class="py-3 flex items-center justify-between gap-4">
+            <div>
+              <span class="font-bold text-slate-800 dark:text-slate-200">Aarav S. (Class 10)</span>: "Please explain the electron transport chain diagram simply."
+              <div class="text-[11px] text-slate-400 mt-0.5">Subject: Biology &bull; 20 minutes ago</div>
+            </div>
+            <button onclick="resolveDoubtDemo(this)" class="px-3 py-1.5 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 font-semibold border border-purple-200 dark:border-purple-800">
+              Answer Doubt
+            </button>
+          </div>
+          <div class="py-3 flex items-center justify-between gap-4">
+            <div>
+              <span class="font-bold text-slate-800 dark:text-slate-200">Pooja Patel (Class 9)</span>: "Why does sound travel faster in solids than gases?"
+              <div class="text-[11px] text-slate-400 mt-0.5">Subject: Physics &bull; 1 hour ago</div>
+            </div>
+            <button onclick="resolveDoubtDemo(this)" class="px-3 py-1.5 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 font-semibold border border-purple-200 dark:border-purple-800">
+              Answer Doubt
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. VIEW: PARENT PORTAL -->
+    <section id="view-parent" class="page-view hidden space-y-6">
+      <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-amber-600">Parent Guardian Portal</span>
+        <h2 class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100">Child Progress: Aarav Sharma</h2>
+        <p class="text-xs sm:text-sm text-slate-500">Monitor attendance, study consistency, quiz scores, and mentorship updates.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400">Learning Consistency</span>
+          <div class="font-heading font-bold text-2xl text-amber-600 mt-1">94% Active</div>
+          <span class="text-[11px] text-slate-500">Active 6 out of 7 days this week</span>
+        </div>
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400">Total Practice Tests</span>
+          <div class="font-heading font-bold text-2xl text-slate-800 dark:text-slate-100 mt-1">12 Completed</div>
+          <span class="text-[11px] text-emerald-600">Average score: 82.5%</span>
+        </div>
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400">Teacher Remarks</span>
+          <div class="font-heading font-bold text-sm text-slate-800 dark:text-slate-100 mt-2">"Exceptional curiosity in physics concepts."</div>
+          <span class="text-[11px] text-slate-400">- Dr. Meenakshi Sundaram</span>
+        </div>
+      </div>
+
+      <div class="glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+        <h3 class="font-heading font-bold text-base">Parental Safety &amp; Device Policy</h3>
+        <p class="text-xs text-slate-500 leading-relaxed">
+          GyanPath operates with zero ads, child-safe language filters, and adheres to strict privacy protection. All learning logs remain stored locally inside your browser environment unless you request cloud sync.
+        </p>
+      </div>
+    </section>
+
+    <!-- 10. VIEW: ADMIN COMMAND CENTER -->
+    <section id="view-admin" class="page-view hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Admin Control Room</span>
+          <h2 class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100">Platform Management System</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Manage syllabus, question banks, study resources, scholarship applications, and system backups.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="openModal('addNoteModal')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-600 text-white hover:bg-brand-700">
+            + New Study Note
+          </button>
+          <button onclick="openModal('addExamModal')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">
+            + Build Exam
+          </button>
+          <button onclick="openModal('backupModal')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200">
+            <i class="fa-solid fa-database mr-1"></i> Data Backup
+          </button>
+        </div>
+      </div>
+
+      <!-- Admin Stat Counters -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400 font-medium">Demo Students</span>
+          <div class="font-heading font-bold text-2xl text-brand-600 mt-1">1,248</div>
+          <span class="text-[11px] text-emerald-500 font-medium">&bull; Local database active</span>
+        </div>
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400 font-medium">Active Teachers</span>
+          <div class="font-heading font-bold text-2xl text-purple-600 mt-1">14 Mentors</div>
+          <span class="text-[11px] text-slate-400">All volunteer educators</span>
+        </div>
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400 font-medium">Published Notes</span>
+          <div id="adminNotesCount" class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100 mt-1">6 Resources</div>
+          <span class="text-[11px] text-slate-400">Class 1 to 12</span>
+        </div>
+        <div class="glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <span class="text-xs text-slate-400 font-medium">Total Test Attempts</span>
+          <div id="adminTestAttemptsCount" class="font-heading font-bold text-2xl text-slate-900 dark:text-slate-100 mt-1">28 Attempts</div>
+          <span class="text-[11px] text-emerald-600">Saved in browser state</span>
+        </div>
+      </div>
+
+      <!-- Admin Tabbed Controls -->
+      <div class="glass-card rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+        <div class="flex border-b border-slate-200 dark:border-slate-800 text-xs font-semibold overflow-x-auto">
+          <button onclick="setAdminTab('materials')" class="admin-tab-btn px-4 py-3 border-b-2 border-brand-600 text-brand-600 dark:text-brand-400" data-tab="materials">Manage Materials</button>
+          <button onclick="setAdminTab('scholarships')" class="admin-tab-btn px-4 py-3 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200" data-tab="scholarships">Scholarship Requests</button>
+          <button onclick="setAdminTab('logs')" class="admin-tab-btn px-4 py-3 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200" data-tab="logs">System Activity Logs</button>
+        </div>
+
+        <!-- Admin Tab: Materials -->
+        <div id="adminTab-materials" class="p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="font-heading font-bold text-sm">Study Content Library</h4>
+            <span class="text-xs text-slate-400">CRUD operations persist to localStorage</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Title</th>
+                  <th class="p-3">Class &amp; Board</th>
+                  <th class="p-3">Subject</th>
+                  <th class="p-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminMaterialsTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Admin Tab: Scholarships -->
+        <div id="adminTab-scholarships" class="p-6 space-y-4 hidden">
+          <div class="flex items-center justify-between">
+            <h4 class="font-heading font-bold text-sm">Free Education &amp; Mentorship Aid Applications</h4>
+            <span class="text-xs text-slate-400">Applications submitted through public portal</span>
+          </div>
+          <div id="adminScholarshipList" class="space-y-3">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Admin Tab: Logs -->
+        <div id="adminTab-logs" class="p-6 space-y-4 hidden">
+          <h4 class="font-heading font-bold text-sm">System Audit Trail</h4>
+          <div id="adminLogsContainer" class="font-mono text-[11px] bg-slate-900 text-slate-300 p-4 rounded-xl space-y-1.5 max-h-64 overflow-y-auto">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 text-xs py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <span class="font-heading font-bold text-base text-slate-900 dark:text-slate-100">GyanPath</span>
+          <span class="text-slate-400">&bull; Dedicated to Free Quality Education for All Children</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 text-slate-500">
+          <button onclick="navigate('home')" class="hover:text-brand-600">Home</button>
+          <button onclick="navigate('study')" class="hover:text-brand-600">Study Materials</button>
+          <button onclick="navigate('exam')" class="hover:text-brand-600">Practice Tests</button>
+          <button onclick="openModal('scholarshipModal')" class="hover:text-brand-600">Scholarships</button>
+          <button onclick="openModal('backupModal')" class="hover:text-brand-600">Backup & Restore</button>
+        </div>
+      </div>
+      <div class="border-t border-slate-100 dark:border-slate-800 pt-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-400 text-[11px]">
+        <p>&copy; 2026 GyanPath Open Learning Initiative. Built with pure client-side architecture. No tracking cookies.</p>
+        <p>Proudly supporting CBSE, ICSE, and All State Education Boards.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- 1. Scholarship & Free Mentorship Application Modal -->
+  <div id="scholarshipModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-heading font-bold text-xl text-slate-900 dark:text-slate-100">Apply for Free Mentorship Support</h3>
+        <button onclick="closeModal('scholarshipModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <p class="text-xs text-slate-500">For students who cannot afford paid tuition. 100% free textbook support, personalized mentorship, and test doubt clearing.</p>
+      <form onsubmit="handleScholarshipSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300">Student Full Name</label>
+          <input type="text" id="schName" required placeholder="e.g. Rahul Kumar" class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300">Class</label>
+            <select id="schClass" class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+              <!-- populated in js -->
+            </select>
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300">Board</label>
+            <select id="schBoard" class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+              <option value="CBSE">CBSE</option>
+              <option value="ICSE">ICSE</option>
+              <option value="State Board">State Board</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300">Family Income / Need Statement</label>
+          <textarea id="schReason" rows="3" required placeholder="Briefly describe your requirements or challenges..." class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('scholarshipModal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md">Submit Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. AI Configuration Modal (Optional API key & Mock toggle) -->
+  <div id="aiConfigModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-heading font-bold text-lg text-slate-900 dark:text-slate-100">AI Assistant Settings</h3>
+        <button onclick="closeModal('aiConfigModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p class="text-xs text-slate-500">GyanPath includes a smart offline academic simulation engine. You can also integrate your own Gemini API key if desired.</p>
+      
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300">Operation Engine</label>
+          <select id="aiEngineMode" class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+            <option value="smart-mock">Offline Rule-Based Academic Engine (Default)</option>
+            <option value="gemini-api">Gemini 2.5 Flash API (Direct Browser Call)</option>
+          </select>
+        </div>
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300">Optional Google Gemini API Key</label>
+          <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono">
+          <p class="text-[10px] text-slate-400 mt-1">Key is only kept in local device storage and sent directly to Google API endpoints.</p>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="saveAiSettings()" class="px-5 py-2 rounded-xl text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white shadow-md">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Add Study Note Modal (Admin / Teacher) -->
+  <div id="addNoteModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card bg-white dark:bg-slate-900 w-full max-w-xl rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h3 class="font-heading font-bold text-lg text-slate-900 dark:text-slate-100">Publish New Study Note</h3>
+        <button onclick="closeModal('addNoteModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleAddNoteSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300">Topic / Chapter Title</label>
+          <input type="text" id="newNoteTitle" required placeholder="e.g. Life Processes: Nutrition & Respiration" class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300">Class</label>
+            <select id="newNoteClass" class="w-full mt-1 p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+              <!-- populated in js -->
+            </select>
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300">Board</label>
+            <select id="newNoteBoard" class="w-full mt-1 p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+              <option value="CBSE">CBSE</option>
+              <option value="ICSE">ICSE</option>
+              <option value="State Board">State Board</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300">Subject</label>
+            <select id="newNoteSubject" class="w-full mt-1 p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+              <option value="Science">Science</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Biology">Biology</option>
+              <option value="Social Science">Social Science</option>
+              <option value="English">English</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300">Brief Chapter Summary</label>
+          <input type="text" id="newNoteSummary" required placeholder="Concise overview of learning objectives..." class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+        </div>
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300">Full Content / Formulae (HTML or Plain Text)</label>
+          <textarea id="newNoteBody" rows="6" required placeholder="Enter key points, formulas, definitions, and revision questions..." class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('addNoteModal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white shadow-md">Publish to Library</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Add Exam Modal (Admin) -->
+  <div id="addExamModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-heading font-bold text-lg text-slate-900 dark:text-slate-100">Create New CBT Exam</h3>
+        <button onclick="closeModal('addExamModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleCreateExamSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300">Exam Title</label>
+          <input type="text" id="newExamTitle" required placeholder="e.g. Class 10 Light & Optics Diagnostic" class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300">Subject</label>
+            <select id="newExamSubject" class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+              <option value="Mathematics">Mathematics</option>
+              <option value="Science">Science</option>
+              <option value="Physics">Physics</option>
+              <option value="English">English</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300">Duration (Minutes)</label>
+            <input type="number" id="newExamDuration" value="10" min="5" max="180" class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+          </div>
+        </div>
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300">Sample Question Prompt</label>
+          <input type="text" id="newExamQ1" required placeholder="e.g. Which unit is used to measure focal length?" class="w-full mt-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" id="newExamOptA" required placeholder="Option A: Metre (Correct)" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+          <input type="text" id="newExamOptB" required placeholder="Option B: Candela" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('addExamModal')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white shadow-md">Publish Exam</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. Backup & Data Management Modal -->
+  <div id="backupModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-heading font-bold text-lg text-slate-900 dark:text-slate-100">Local Data &amp; Backup Manager</h3>
+        <button onclick="closeModal('backupModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p class="text-xs text-slate-500">All data in GyanPath is maintained in your local browser state. You can export a JSON snapshot or restore previous records at any time.</p>
+      
+      <div class="space-y-3">
+        <button onclick="exportJsonBackup()" class="w-full py-2.5 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 font-semibold text-xs flex items-center justify-center gap-2 hover:bg-brand-100">
+          <i class="fa-solid fa-download"></i> Export Data Backup (.json)
+        </button>
+
+        <label class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer border border-slate-200 dark:border-slate-700">
+          <i class="fa-solid fa-upload"></i> Restore from JSON Backup
+          <input type="file" id="backupFileInput" onchange="importJsonBackup(event)" accept=".json" class="hidden">
+        </label>
+
+        <div class="border-t border-slate-200 dark:border-slate-800 my-2"></div>
+
+        <button onclick="confirmResetDemoData()" class="w-full py-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900 font-semibold text-xs flex items-center justify-center gap-2 hover:bg-rose-100">
+          <i class="fa-solid fa-arrows-rotate"></i> Reset All to Default Demo Data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT APPLICATION CORE ================= -->
+  <script>
+    /* ==========================================================================
+       GYANPATH CORE APPLICATION ENGINE
+       Self-contained, local-first education architecture
+       ========================================================================== */
+
+    // 1. DEFAULT SEED DATABASE
+    const DEFAULT_DATA = {
+      version: "1.0.0",
+      settings: {
+        theme: "light",
+        language: "EN",
+        currentClass: 10,
+        currentBoard: "CBSE",
+        aiEngine: "smart-mock",
+        geminiApiKey: ""
+      },
+      currentRole: "student", // 'student' | 'teacher' | 'parent' | 'admin'
+      notes: [
+        {
+          id: "note-1",
+          class: 10,
+          board: "CBSE",
+          subject: "Mathematics",
+          chapter: "Chapter 4: Quadratic Equations",
+          title: "Standard Forms, Discriminant & Roots",
+          summary: "Mastering factorization, quadratic formulas, and roots nature.",
+          bookmarked: true,
+          content: `
+            <h3>1. Standard Quadratic Equation Form</h3>
+            <p>A quadratic equation in variable <em>x</em> is of the form: <code>ax² + bx + c = 0</code>, where <em>a, b, c</em> are real numbers and <strong>a ≠ 0</strong>.</p>
+            <h3>2. The Quadratic Formula</h3>
+            <p>The roots of the equation are given by:</p>
+            <div style="background:#eef2ff; padding:12px; border-radius:8px; font-weight:bold; color:#3730a3;">
+              x = [-b ± √(b² - 4ac)] / (2a)
+            </div>
+            <h3>3. Nature of Roots (The Discriminant D = b² - 4ac)</h3>
+            <ul>
+              <li><strong>If D > 0:</strong> Two distinct real roots exist.</li>
+              <li><strong>If D = 0:</strong> Two equal real roots exist: <code>x = -b / (2a)</code>.</li>
+              <li><strong>If D < 0:</strong> No real roots exist (complex imaginary roots).</li>
+            </ul>
+            <h3>4. Key Revision Problem</h3>
+            <p>Find the roots of <code>2x² - 7x + 3 = 0</code>.</p>
+            <p><strong>Solution:</strong> Here a=2, b=-7, c=3. Discriminant D = (-7)² - 4(2)(3) = 49 - 24 = 25 > 0. <br>Roots are x = (7 ± 5)/4 ⇒ x = 3 and x = 1/2.</p>
+          `
+        },
+        {
+          id: "note-2",
+          class: 10,
+          board: "CBSE",
+          subject: "Science",
+          chapter: "Chapter 6: Life Processes",
+          title: "Photosynthesis, Nutrition & Respiration",
+          summary: "Complete biochemical equations and human organ mechanisms.",
+          bookmarked: false,
+          content: `
+            <h3>1. Autotrophic Nutrition: Photosynthesis</h3>
+            <p>The process by which green plants synthesize carbohydrates from carbon dioxide and water in the presence of chlorophyll and sunlight.</p>
+            <div style="background:#f0fdf4; padding:12px; border-radius:8px; font-weight:bold; color:#166534;">
+              6CO₂ + 12H₂O + Sunlight + Chlorophyll ➔ C₆H₁₂O₆ + 6O₂ + 6H₂O
+            </div>
+            <h3>2. Key Steps in Photosynthesis</h3>
+            <ol>
+              <li>Absorption of light energy by chlorophyll pigments.</li>
+              <li>Conversion of light energy to chemical energy and splitting of water molecules (H₂O) into hydrogen and oxygen.</li>
+              <li>Reduction of carbon dioxide (CO₂) to carbohydrates.</li>
+            </ol>
+            <h3>3. Aerobic vs Anaerobic Respiration</h3>
+            <p><strong>Aerobic:</strong> Occurs in the mitochondria in the presence of oxygen. Produces 36-38 ATP molecules per glucose molecule.</p>
+            <p><strong>Anaerobic:</strong> Occurs in yeast (fermentation producing ethanol + CO₂) and human muscles during high stress (producing Lactic Acid causing cramps).</p>
+          `
+        },
+        {
+          id: "note-3",
+          class: 10,
+          board: "CBSE",
+          subject: "Physics",
+          chapter: "Chapter 10: Light - Reflection and Refraction",
+          title: "Mirror Formula, Lens Formula & Refractive Index",
+          summary: "Sign conventions, ray diagrams, and power of lenses.",
+          bookmarked: false,
+          content: `
+            <h3>1. The Mirror Formula</h3>
+            <p><code>1/f = 1/v + 1/u</code>, where <em>f</em> is focal length, <em>u</em> is object distance, and <em>v</em> is image distance.</p>
+            <h3>2. The Lens Formula</h3>
+            <p><code>1/f = 1/v - 1/u</code> (Notice the minus sign between image and object coordinates).</p>
+            <h3>3. Power of a Lens</h3>
+            <p>Power is the reciprocal of focal length expressed in metres: <code>P = 1 / f (in metres)</code>. The SI unit of lens power is the <strong>Dioptre (D)</strong>.</p>
+            <ul>
+              <li>Convex Lens: Positive focal length ⇒ Positive Power (+D).</li>
+              <li>Concave Lens: Negative focal length ⇒ Negative Power (-D).</li>
+            </ul>
+          `
+        },
+        {
+          id: "note-4",
+          class: 12,
+          board: "CBSE",
+          subject: "Physics",
+          chapter: "Chapter 1: Electric Charges and Fields",
+          title: "Coulomb's Law and Gauss's Theorem",
+          summary: "Electrostatic interactions, permittivity, and flux integrations.",
+          bookmarked: false,
+          content: `
+            <h3>1. Coulomb's Law in Vector Form</h3>
+            <p>Electrostatic force between two point charges q₁ and q₂ separated by distance r in vacuum:</p>
+            <div style="background:#eef2ff; padding:12px; border-radius:8px; font-weight:bold; color:#3730a3;">
+              F = [1 / (4πε₀)] × (|q₁q₂| / r²)
+            </div>
+            <p>where <code>1/(4πε₀) ≈ 9 × 10⁹ N·m²/C²</code>.</p>
+            <h3>2. Gauss's Law</h3>
+            <p>The total electric flux passing through any closed Gaussian surface is equal to <code>1/ε₀</code> times the total enclosed net charge: <code>∮ E · dA = q_enclosed / ε₀</code>.</p>
+          `
+        },
+        {
+          id: "note-5",
+          class: 8,
+          board: "CBSE",
+          subject: "Science",
+          chapter: "Chapter 2: Microorganisms - Friend and Foe",
+          title: "Bacteria, Viruses, and Food Preservation",
+          summary: "Classification of microbes and beneficial uses in fermentation.",
+          bookmarked: false,
+          content: `
+            <h3>1. Four Major Groups of Microorganisms</h3>
+            <p>Bacteria, Fungi, Protozoa, and Algae. (Viruses are microscopic entities that reproduce only inside the host cells).</p>
+            <h3>2. Useful Microorganisms</h3>
+            <ul>
+              <li><strong>Lactobacillus:</strong> Promotes curd formation from milk.</li>
+              <li><strong>Yeast:</strong> Fermentation producing carbon dioxide in bread baking and alcohol preparation.</li>
+              <li><strong>Rhizobium:</strong> Fixes atmospheric nitrogen in root nodules of leguminous plants.</li>
+            </ul>
+          `
+        },
+        {
+          id: "note-6",
+          class: 5,
+          board: "State Board",
+          subject: "Science",
+          chapter: "Unit 3: Plants and Pollination",
+          title: "Parts of a Flower and Seed Germination",
+          summary: "Colorful illustrations of petals, sepals, stamens, and pistils.",
+          bookmarked: false,
+          content: `
+            <h3>1. Main Parts of a Plant</h3>
+            <p>Roots (absorb water), Stem (gives support), Leaves (kitchen of the plant making food), and Flowers (produce seeds).</p>
+            <h3>2. What is Pollination?</h3>
+            <p>Pollination happens when pollen grains from the male part (stamen) travel to the female part (pistil) of a flower through wind, water, or friendly bees!</p>
+          `
+        }
+      ],
+      exams: [
+        {
+          id: "exam-1",
+          title: "Class 10 Mathematics: Quadratic Diagnostic",
+          subject: "Mathematics",
+          class: 10,
+          durationMins: 10,
+          questions: [
+            {
+              id: "q1",
+              prompt: "What is the discriminant of the quadratic equation 2x² - 4x + 3 = 0?",
+              options: ["-8", "8", "-16", "24"],
+              correctIndex: 0,
+              explanation: "Discriminant D = b² - 4ac = (-4)² - 4(2)(3) = 16 - 24 = -8."
+            },
+            {
+              id: "q2",
+              prompt: "If the roots of ax² + bx + c = 0 are real and equal, then which relation is true?",
+              options: ["b² < 4ac", "b² = 4ac", "b² > 4ac", "b² = 0"],
+              correctIndex: 1,
+              explanation: "Equal real roots occur strictly when the discriminant D = b² - 4ac = 0."
+            },
+            {
+              id: "q3",
+              prompt: "What are the roots of equation x² - 9 = 0?",
+              options: ["3 only", "-3 only", "±3", "9 and -9"],
+              correctIndex: 2,
+              explanation: "x² = 9 implies x = √9 = ±3."
+            },
+            {
+              id: "q4",
+              prompt: "What is the sum of roots for the equation 3x² + 6x - 2 = 0?",
+              options: ["-2", "2", "-6", "6"],
+              correctIndex: 0,
+              explanation: "Sum of roots = -b/a = -6 / 3 = -2."
+            }
+          ]
+        },
+        {
+          id: "exam-2",
+          title: "Class 10 Science: Life Processes Mastery",
+          subject: "Science",
+          class: 10,
+          durationMins: 10,
+          questions: [
+            {
+              id: "q21",
+              prompt: "Which gas is released during photosynthesis by green plants?",
+              options: ["Carbon Dioxide", "Oxygen", "Nitrogen", "Methane"],
+              correctIndex: 1,
+              explanation: "Oxygen is produced from the photolysis (splitting) of water molecules."
+            },
+            {
+              id: "q22",
+              prompt: "The breakdown of pyruvate to give carbon dioxide, water and energy takes place in:",
+              options: ["Cytoplasm", "Mitochondria", "Chloroplast", "Nucleus"],
+              correctIndex: 1,
+              explanation: "Aerobic respiration completes inside mitochondria releasing ATP."
+            },
+            {
+              id: "q23",
+              prompt: "In humans, the filtration units of kidneys are called:",
+              options: ["Ureters", "Nephrons", "Neurons", "Alveoli"],
+              correctIndex: 1,
+              explanation: "Nephrons are the structural and functional filtration units of the human kidney."
+            }
+          ]
+        }
+      ],
+      userAttempts: [
+        {
+          id: "att-1",
+          examId: "exam-1",
+          examTitle: "Class 10 Mathematics: Quadratic Diagnostic",
+          date: "2026-10-25",
+          score: 3,
+          total: 4,
+          accuracy: 75,
+          weakTopics: ["Discriminant Calculations"]
+        }
+      ],
+      doubtsQueue: [
+        {
+          id: "d-1",
+          studentName: "Aarav Sharma",
+          subject: "Mathematics",
+          teacher: "Prof. Arvind Sharma (IIT-D)",
+          question: "How to find discriminant when coefficients are fractions like x² - 1/2 x + 1/4 = 0?",
+          status: "In Queue",
+          time: "10 mins ago"
+        }
+      ],
+      scholarships: [
+        {
+          id: "sch-1",
+          name: "Kavita Sahu",
+          class: 10,
+          board: "State Board",
+          reason: "Single parent household, seeking textbook set and weekly mentorship support.",
+          status: "Approved",
+          trackingCode: "GP-SCH-9081"
+        }
+      ],
+      logs: [
+        "[System] GyanPath platform initialized locally.",
+        "[Storage] Default CBSE/ICSE curriculum loaded.",
+        "[User] Student session active (Aarav Sharma)."
+      ]
+    };
+
+    // 2. STATE CONTROLLER
+    let APP_STATE = {};
+
+    function initStorage() {
+      try {
+        const stored = localStorage.getItem("gyanpath_app_state_v1");
+        if (stored) {
+          APP_STATE = JSON.parse(stored);
+        } else {
+          APP_STATE = JSON.parse(JSON.stringify(DEFAULT_DATA));
+          saveState();
+        }
+      } catch (err) {
+        console.error("Storage parse error, resetting state:", err);
+        APP_STATE = JSON.parse(JSON.stringify(DEFAULT_DATA));
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem("gyanpath_app_state_v1", JSON.stringify(APP_STATE));
+      } catch (e) {
+        showToast("Storage quota warning or disabled local storage", "error");
+      }
+    }
+
+    function logAction(actionText) {
+      const time = new Date().toLocaleTimeString();
+      const entry = `[${time}] ${actionText}`;
+      if (!APP_STATE.logs) APP_STATE.logs = [];
+      APP_STATE.logs.unshift(entry);
+      if (APP_STATE.logs.length > 50) APP_STATE.logs.pop();
+      saveState();
+      renderAdminLogs();
+    }
+
+    // 3. THEME & LANGUAGE MANAGEMENT
+    function initTheme() {
+      const isDark = APP_STATE.settings.theme === "dark";
+      if (isDark) {
+        document.documentElement.classList.add("dark");
+        document.getElementById("themeIcon").className = "fa-solid fa-sun";
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.getElementById("themeIcon").className = "fa-solid fa-moon";
+      }
+      document.getElementById("langToggleBtn").textContent = APP_STATE.settings.language || "EN";
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle("dark");
+      APP_STATE.settings.theme = isDark ? "dark" : "light";
+      document.getElementById("themeIcon").className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+      saveState();
+      showToast(`Switched to ${APP_STATE.settings.theme} mode`, "info");
+    }
+
+    function toggleLanguage() {
+      APP_STATE.settings.language = APP_STATE.settings.language === "EN" ? "HI" : "EN";
+      document.getElementById("langToggleBtn").textContent = APP_STATE.settings.language;
+      saveState();
+      showToast(`Language set to ${APP_STATE.settings.language === "EN" ? "English" : "हिंदी"}`, "info");
+    }
+
+    // 4. NAVIGATION ROUTER
+    function navigate(pageId) {
+      document.querySelectorAll(".page-view").forEach(el => el.classList.add("hidden"));
+      const target = document.getElementById(`view-${pageId}`);
+      if (target) {
+        target.classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // Update active nav styling
+      document.querySelectorAll(".nav-link").forEach(btn => {
+        if (btn.getAttribute("data-page") === pageId) {
+          btn.classList.add("bg-brand-50", "dark:bg-brand-950/50", "text-brand-600", "dark:text-brand-400");
+        } else {
+          btn.classList.remove("bg-brand-50", "dark:bg-brand-950/50", "text-brand-600", "dark:text-brand-400");
+        }
+      });
+
+      // Special triggers on view entry
+      if (pageId === "study") filterNotes();
+      if (pageId === "exam") renderExamList();
+      if (pageId === "student") renderStudentDashboard();
+      if (pageId === "admin") renderAdminView();
+      if (pageId === "doubts") renderDoubtsQueue();
+    }
+
+    // 5. ROLE CONTROLLER
+    function switchRole(roleKey) {
+      APP_STATE.currentRole = roleKey;
+      saveState();
+      updateRoleUI();
+      toggleRoleMenu(false);
+
+      if (roleKey === "student") navigate("student");
+      else if (roleKey === "teacher") navigate("teacher");
+      else if (roleKey === "parent") navigate("parent");
+      else if (roleKey === "admin") navigate("admin");
+
+      showToast(`Switched view to ${roleKey.toUpperCase()} Portal`, "success");
+      logAction(`Role switched to ${roleKey}`);
+    }
+
+    function updateRoleUI() {
+      const labels = {
+        student: "Student Demo",
+        teacher: "Teacher Desk",
+        parent: "Parent Portal",
+        admin: "Admin Command"
+      };
+      const colors = {
+        student: "bg-emerald-500",
+        teacher: "bg-purple-500",
+        parent: "bg-amber-500",
+        admin: "bg-rose-500"
+      };
+      document.getElementById("currentRoleLabel").textContent = labels[APP_STATE.currentRole] || "Student";
+      document.getElementById("currentRoleBadge").className = `w-2 h-2 rounded-full ${colors[APP_STATE.currentRole] || 'bg-emerald-500'}`;
+    }
+
+    function toggleRoleMenu(force) {
+      const menu = document.getElementById("roleMenu");
+      if (force !== undefined) {
+        if (force) menu.classList.remove("hidden");
+        else menu.classList.add("hidden");
+      } else {
+        menu.classList.toggle("hidden");
+      }
+    }
+
+    function toggleMobileNav() {
+      document.getElementById("mobileNav").classList.toggle("hidden");
+    }
+
+    // 6. POPULATE GLOBAL CLASS SELECTORS (Class 1 to 12)
+    function initClassPickers() {
+      const selectors = [
+        document.getElementById("globalClassSelector"),
+        document.getElementById("mobileClassSelector"),
+        document.getElementById("schClass"),
+        document.getElementById("newNoteClass")
+      ];
+      selectors.forEach(sel => {
+        if (!sel) return;
+        sel.innerHTML = "";
+        for (let i = 1; i <= 12; i++) {
+          const opt = document.createElement("option");
+          opt.value = i;
+          opt.textContent = `Class ${i}`;
+          if (i === Number(APP_STATE.settings.currentClass)) opt.selected = true;
+          sel.appendChild(opt);
+        }
+      });
+
+      // Quick class grid on Home page
+      const grid = document.getElementById("classGridContainer");
+      if (grid) {
+        grid.innerHTML = "";
+        for (let i = 1; i <= 12; i++) {
+          const btn = document.createElement("button");
+          btn.className = `p-3 rounded-xl border text-center font-heading font-bold text-sm transition-all hover:-translate-y-0.5 shadow-sm ${
+            i === Number(APP_STATE.settings.currentClass)
+              ? "bg-brand-600 text-white border-brand-600 shadow-brand-500/30"
+              : "glass-card hover:border-brand-400 text-slate-800 dark:text-slate-200"
+          }`;
+          btn.innerHTML = `<span class="block text-[10px] uppercase text-slate-400 font-normal">Grade</span>${i}`;
+          btn.onclick = () => {
+            APP_STATE.settings.currentClass = i;
+            saveState();
+            syncClassSelectors();
+            navigate("study");
+            showToast(`Selected Class ${i} study hub`, "info");
+          };
+          grid.appendChild(btn);
+        }
+      }
+    }
+
+    function syncClassSelectors() {
+      document.getElementById("globalClassSelector").value = APP_STATE.settings.currentClass;
+      document.getElementById("mobileClassSelector").value = APP_STATE.settings.currentClass;
+      document.getElementById("globalBoardSelector").value = APP_STATE.settings.currentBoard;
+    }
+
+    function updateGlobalSelection() {
+      APP_STATE.settings.currentClass = Number(document.getElementById("globalClassSelector").value);
+      APP_STATE.settings.currentBoard = document.getElementById("globalBoardSelector").value;
+      saveState();
+      initClassPickers();
+      filterNotes();
+      showToast(`Class ${APP_STATE.settings.currentClass} (${APP_STATE.settings.currentBoard}) selected`, "info");
+    }
+
+    function updateMobileSelection() {
+      APP_STATE.settings.currentClass = Number(document.getElementById("mobileClassSelector").value);
+      APP_STATE.settings.currentBoard = document.getElementById("mobileBoardSelector").value;
+      saveState();
+      syncClassSelectors();
+      filterNotes();
+    }
+
+    // 7. STUDY MATERIALS & NOTES MODULE
+    let activeViewingNoteId = null;
+
+    function filterNotes() {
+      const search = (document.getElementById("noteSearchInput").value || "").toLowerCase();
+      const subject = document.getElementById("studySubjectFilter").value;
+      const targetClass = Number(APP_STATE.settings.currentClass);
+
+      const filtered = APP_STATE.notes.filter(note => {
+        const matchesClass = note.class === targetClass;
+        const matchesSubject = subject === "ALL" || note.subject === subject;
+        const matchesSearch = !search ||
+          note.title.toLowerCase().includes(search) ||
+          note.chapter.toLowerCase().includes(search) ||
+          note.summary.toLowerCase().includes(search);
+        return matchesClass && matchesSubject && matchesSearch;
+      });
+
+      const container = document.getElementById("notesListContainer");
+      container.innerHTML = "";
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12 glass-card rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
+            <i class="fa-solid fa-book-open text-3xl text-slate-400 mb-2"></i>
+            <h4 class="font-heading font-bold text-base text-slate-700 dark:text-slate-300">No notes found for Class ${targetClass} (${subject})</h4>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1">Try switching subject filter or add new content using the Admin / Teacher portal.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(note => {
+        const card = document.createElement("div");
+        card.className = "glass-card p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between text-xs mb-2">
+              <span class="font-bold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 px-2 py-0.5 rounded">${note.subject}</span>
+              <button onclick="toggleBookmark('${note.id}', event)" class="text-slate-400 hover:text-amber-500">
+                <i class="${note.bookmarked ? 'fa-solid fa-bookmark text-amber-500' : 'fa-regular fa-bookmark'}"></i>
+              </button>
+            </div>
+            <h3 class="font-heading font-bold text-base text-slate-900 dark:text-slate-100 mb-1">${note.title}</h3>
+            <p class="text-xs font-medium text-slate-400 mb-2">${note.chapter}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-4">${note.summary}</p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <span class="text-[11px] text-slate-400">Class ${note.class} &bull; ${note.board}</span>
+            <button onclick="openNoteReader('${note.id}')" class="px-3 py-1.5 rounded-lg bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-300 hover:bg-brand-100 font-semibold text-xs flex items-center gap-1">
+              Read Lesson <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function toggleBookmark(noteId, event) {
+      if (event) event.stopPropagation();
+      const note = APP_STATE.notes.find(n => n.id === noteId);
+      if (note) {
+        note.bookmarked = !note.bookmarked;
+        saveState();
+        filterNotes();
+        showToast(note.bookmarked ? "Saved to Bookmarks" : "Bookmark removed", "info");
+      }
+    }
+
+    function openNoteReader(noteId) {
+      const note = APP_STATE.notes.find(n => n.id === noteId);
+      if (!note) return;
+      activeViewingNoteId = note.id;
+
+      document.getElementById("readerTitle").textContent = note.title;
+      document.getElementById("readerChapter").textContent = note.chapter;
+      document.getElementById("readerClassBadge").textContent = `Class ${note.class}`;
+      document.getElementById("readerBoardBadge").textContent = note.board;
+      document.getElementById("readerSubjectBadge").textContent = note.subject;
+      document.getElementById("readerContentBody").innerHTML = note.content;
+
+      const bmBtn = document.getElementById("readerBookmarkBtn");
+      bmBtn.innerHTML = note.bookmarked
+        ? `<i class="fa-solid fa-bookmark text-amber-500"></i> Bookmarked`
+        : `<i class="fa-regular fa-bookmark"></i> Bookmark`;
+
+      navigate("note-reader");
+      logAction(`Opened lesson: ${note.title}`);
+    }
+
+    function toggleCurrentNoteBookmark() {
+      if (!activeViewingNoteId) return;
+      toggleBookmark(activeViewingNoteId);
+      const note = APP_STATE.notes.find(n => n.id === activeViewingNoteId);
+      const bmBtn = document.getElementById("readerBookmarkBtn");
+      bmBtn.innerHTML = note.bookmarked
+        ? `<i class="fa-solid fa-bookmark text-amber-500"></i> Bookmarked`
+        : `<i class="fa-regular fa-bookmark"></i> Bookmark`;
+    }
+
+    // 8. INTERACTIVE CBT EXAM ENGINE
+    let currentExam = null;
+    let currentQuestionIndex = 0;
+    let studentResponses = {}; // { qId: optionIndex }
+    let markedForReview = new Set();
+    let examTimerInterval = null;
+    let secondsRemaining = 0;
+
+    function renderExamList() {
+      const filter = document.getElementById("examSubjectFilter").value;
+      const targetClass = Number(APP_STATE.settings.currentClass);
+      const grid = document.getElementById("examCardGrid");
+      grid.innerHTML = "";
+
+      const filtered = APP_STATE.exams.filter(e => {
+        const matchesClass = e.class ? e.class === targetClass : true;
+        const matchesSubject = filter === "ALL" || e.subject === filter;
+        return matchesClass && matchesSubject;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12 glass-card rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
+            <i class="fa-solid fa-stopwatch text-3xl text-slate-400 mb-2"></i>
+            <h4 class="font-heading font-bold text-base text-slate-700 dark:text-slate-300">No mock tests found for Class ${targetClass}</h4>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1">Select a different grade or build a new exam through the Admin tab.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(exam => {
+        const card = document.createElement("div");
+        card.className = "glass-card p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between text-xs mb-3">
+              <span class="font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded">${exam.subject}</span>
+              <span class="text-slate-400"><i class="fa-regular fa-clock mr-1"></i>${exam.durationMins} Mins</span>
+            </div>
+            <h3 class="font-heading font-bold text-lg text-slate-900 dark:text-slate-100 mb-2">${exam.title}</h3>
+            <p class="text-xs text-slate-500 mb-4">Total Questions: <strong>${exam.questions.length}</strong> &bull; Mode: Timed CBT</p>
+          </div>
+          <button onclick="startCbtExam('${exam.id}')" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs shadow-md shadow-brand-500/20 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-play"></i> Launch Exam Arena
+          </button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function startCbtExam(examId) {
+      currentExam = APP_STATE.exams.find(e => e.id === examId);
+      if (!currentExam) return;
+
+      currentQuestionIndex = 0;
+      studentResponses = {};
+      markedForReview.clear();
+      secondsRemaining = currentExam.durationMins * 60;
+
+      document.getElementById("examListingMode").classList.add("hidden");
+      document.getElementById("examResultMode").classList.add("hidden");
+      document.getElementById("activeTestMode").classList.remove("hidden");
+
+      document.getElementById("cbtTestTitle").textContent = currentExam.title;
+      document.getElementById("cbtSubjectBadge").textContent = `${currentExam.subject} (Class ${currentExam.class || 10})`;
+
+      renderCbtQuestion();
+      renderCbtPalette();
+
+      clearInterval(examTimerInterval);
+      examTimerInterval = setInterval(updateCbtTimer, 1000);
+      updateCbtTimer();
+      logAction(`Started CBT exam: ${currentExam.title}`);
+    }
+
+    function updateCbtTimer() {
+      if (secondsRemaining <= 0) {
+        clearInterval(examTimerInterval);
+        submitTestFinal(true);
+        return;
+      }
+      secondsRemaining--;
+      const mins = Math.floor(secondsRemaining / 60);
+      const secs = secondsRemaining % 60;
+      document.getElementById("cbtTimerDisplay").textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function renderCbtQuestion() {
+      const q = currentExam.questions[currentQuestionIndex];
+      document.getElementById("cbtQuestionNumber").textContent = `Question ${currentQuestionIndex + 1} of ${currentExam.questions.length}`;
+      document.getElementById("cbtQuestionPrompt").textContent = q.prompt;
+
+      const optsContainer = document.getElementById("cbtOptionsContainer");
+      optsContainer.innerHTML = "";
+
+      q.options.forEach((opt, idx) => {
+        const isSelected = studentResponses[q.id] === idx;
+        const optRow = document.createElement("label");
+        optRow.className = `flex items-center gap-3 p-3.5 rounded-xl border text-xs cursor-pointer transition-all ${
+          isSelected
+            ? "border-brand-500 bg-brand-50 dark:bg-brand-950/60 font-semibold text-brand-700 dark:text-brand-300"
+            : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750"
+        }`;
+        optRow.innerHTML = `
+          <input type="radio" name="cbtOptionRadio" value="${idx}" ${isSelected ? 'checked' : ''} onchange="selectCbtOption(${idx})" class="text-brand-600 focus:ring-brand-500">
+          <span>${opt}</span>
+        `;
+        optsContainer.appendChild(optRow);
+      });
+
+      // Update button states
+      document.getElementById("cbtPrevBtn").disabled = currentQuestionIndex === 0;
+      document.getElementById("cbtNextBtn").textContent = (currentQuestionIndex === currentExam.questions.length - 1) ? "Review All" : "Next \u2192";
+
+      const markBtn = document.getElementById("markReviewBtn");
+      if (markedForReview.has(q.id)) {
+        markBtn.classList.add("bg-amber-500", "text-white");
+      } else {
+        markBtn.classList.remove("bg-amber-500", "text-white");
+      }
+
+      renderCbtPalette();
+    }
+
+    function selectCbtOption(idx) {
+      const q = currentExam.questions[currentQuestionIndex];
+      studentResponses[q.id] = idx;
+      renderCbtQuestion();
+    }
+
+    function clearCurrentAnswer() {
+      const q = currentExam.questions[currentQuestionIndex];
+      delete studentResponses[q.id];
+      renderCbtQuestion();
+    }
+
+    function toggleMarkForReview() {
+      const q = currentExam.questions[currentQuestionIndex];
+      if (markedForReview.has(q.id)) {
+        markedForReview.delete(q.id);
+      } else {
+        markedForReview.add(q.id);
+      }
+      renderCbtQuestion();
+    }
+
+    function nextCbtQuestion() {
+      if (currentQuestionIndex < currentExam.questions.length - 1) {
+        currentQuestionIndex++;
+        renderCbtQuestion();
+      }
+    }
+
+    function prevCbtQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderCbtQuestion();
+      }
+    }
+
+    function jumpToCbtQuestion(idx) {
+      currentQuestionIndex = idx;
+      renderCbtQuestion();
+    }
+
+    function renderCbtPalette() {
+      const palette = document.getElementById("cbtPaletteGrid");
+      palette.innerHTML = "";
+      currentExam.questions.forEach((q, idx) => {
+        const btn = document.createElement("button");
+        const isCurrent = idx === currentQuestionIndex;
+        const isAnswered = studentResponses[q.id] !== undefined;
+        const isMarked = markedForReview.has(q.id);
+
+        let bgClass = "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300";
+        if (isAnswered) bgClass = "bg-emerald-500 text-white";
+        else if (isMarked) bgClass = "bg-amber-400 text-slate-900 font-bold";
+
+        btn.className = `w-9 h-9 rounded-lg text-xs font-semibold flex items-center justify-center transition-all ${bgClass} ${
+          isCurrent ? "ring-2 ring-brand-500 ring-offset-2 dark:ring-offset-slate-900 font-bold scale-105" : ""
+        }`;
+        btn.textContent = idx + 1;
+        btn.onclick = () => jumpToCbtQuestion(idx);
+        palette.appendChild(btn);
+      });
+    }
+
+    function confirmSubmitTest() {
+      const answeredCount = Object.keys(studentResponses).length;
+      const total = currentExam.questions.length;
+      if (confirm(`You have answered ${answeredCount} of ${total} questions. Are you ready to submit your test?`)) {
+        submitTestFinal(false);
+      }
+    }
+
+    function submitTestFinal(timeOut = false) {
+      clearInterval(examTimerInterval);
+      let score = 0;
+      const total = currentExam.questions.length;
+
+      currentExam.questions.forEach(q => {
+        if (studentResponses[q.id] === q.correctIndex) {
+          score++;
+        }
+      });
+
+      const accuracy = Math.round((score / total) * 100);
+      const timeSpentSecs = (currentExam.durationMins * 60) - secondsRemaining;
+      const timeSpentStr = `${Math.floor(timeSpentSecs / 60)}m ${timeSpentSecs % 60}s`;
+
+      // Save to local test attempts history
+      const attemptRecord = {
+        id: `att-${Date.now()}`,
+        examId: currentExam.id,
+        examTitle: currentExam.title,
+        date: new Date().toISOString().split("T")[0],
+        score,
+        total,
+        accuracy,
+        weakTopics: accuracy < 70 ? [`${currentExam.subject} Core Fundamentals`] : []
+      };
+
+      if (!APP_STATE.userAttempts) APP_STATE.userAttempts = [];
+      APP_STATE.userAttempts.unshift(attemptRecord);
+      saveState();
+
+      // Show scorecard
+      document.getElementById("activeTestMode").classList.add("hidden");
+      document.getElementById("examResultMode").classList.remove("hidden");
+
+      document.getElementById("resultTestTitle").textContent = `${currentExam.title} &bull; ${timeOut ? 'Auto-submitted (Timer expired)' : 'Completed'}`;
+      document.getElementById("resultScore").textContent = `${score} / ${total}`;
+      document.getElementById("resultAccuracy").textContent = `${accuracy}%`;
+      document.getElementById("resultTimeTaken").textContent = timeSpentStr;
+      document.getElementById("resultAnalysisText").textContent = accuracy >= 75
+        ? "Excellent grasp of core subject topics! Keep practicing to maintain perfect speed."
+        : "Good attempt! Review the detailed explanations below to strengthen concepts you missed.";
+
+      // Explanations list
+      const expContainer = document.getElementById("resultExplanationsContainer");
+      expContainer.innerHTML = "";
+      currentExam.questions.forEach((q, idx) => {
+        const userChoice = studentResponses[q.id];
+        const isCorrect = userChoice === q.correctIndex;
+        const box = document.createElement("div");
+        box.className = `p-4 rounded-xl border text-xs space-y-1.5 ${
+          isCorrect
+            ? "border-emerald-200 dark:border-emerald-900 bg-emerald-50/50 dark:bg-emerald-950/20"
+            : "border-rose-200 dark:border-rose-900 bg-rose-50/50 dark:bg-rose-950/20"
+        }`;
+        box.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-bold">Q${idx + 1}: ${q.prompt}</span>
+            <span class="${isCorrect ? 'text-emerald-600 font-bold' : 'text-rose-600 font-bold'}">
+              ${isCorrect ? '<i class="fa-solid fa-check"></i> Correct' : '<i class="fa-solid fa-xmark"></i> Incorrect'}
+            </span>
+          </div>
+          <div><strong>Your Answer:</strong> ${userChoice !== undefined ? q.options[userChoice] : '<span class="italic text-slate-400">Not Attempted</span>'}</div>
+          <div><strong>Correct Answer:</strong> ${q.options[q.correctIndex]}</div>
+          <div class="text-slate-500 pt-1 border-t border-slate-200 dark:border-slate-700"><strong>Explanation:</strong> ${q.explanation}</div>
+        `;
+        expContainer.appendChild(box);
+      });
+
+      showToast(`Exam submitted! Score: ${score}/${total}`, "success");
+      logAction(`Completed exam: ${currentExam.title} (Score: ${score}/${total})`);
+    }
+
+    function exitExamMode() {
+      document.getElementById("examResultMode").classList.add("hidden");
+      document.getElementById("activeTestMode").classList.add("hidden");
+      document.getElementById("examListingMode").classList.remove("hidden");
+      renderExamList();
+    }
+
+    // 9. AI STUDY ASSISTANT (Rule-Based Offline & Gemini 2.5 API Ready)
+    let aiExplanationMode = "simple";
+    const aiChatHistory = [
+      {
+        role: "assistant",
+        text: "Namaste! I am your GyanPath Academic Mentor. Ask me any concept across Class 1 to 12 Science, Mathematics, or Social Studies in Hindi or English."
+      }
+    ];
+
+    function setAiMode(mode) {
+      aiExplanationMode = mode;
+      document.querySelectorAll(".ai-mode-pill").forEach(pill => {
+        if (pill.getAttribute("data-mode") === mode) {
+          pill.className = "ai-mode-pill px-3 py-1 rounded-full border border-brand-500 bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-300 font-medium";
+        } else {
+          pill.className = "ai-mode-pill px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium";
+        }
+      });
+      showToast(`AI explanation style set to: ${mode}`, "info");
+    }
+
+    function renderAiChat() {
+      const thread = document.getElementById("aiChatThread");
+      thread.innerHTML = "";
+      aiChatHistory.forEach(msg => {
+        const row = document.createElement("div");
+        row.className = `flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`;
+        if (msg.role === 'assistant') {
+          row.innerHTML = `
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center shrink-0 text-xs shadow-md">
+              <i class="fa-solid fa-sparkles"></i>
+            </div>
+            <div class="max-w-[85%] bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs leading-relaxed space-y-2 shadow-sm">
+              <div>${msg.text}</div>
+              <div class="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-700 text-[10px] text-slate-400">
+                <button onclick="copyToClipboard(this)" class="hover:text-brand-600"><i class="fa-regular fa-copy"></i> Copy</button>
+                <button onclick="showToast('Answer feedback recorded', 'info')" class="hover:text-emerald-600"><i class="fa-regular fa-thumbs-up"></i> Helpful</button>
+              </div>
+            </div>
+          `;
+        } else {
+          row.innerHTML = `
+            <div class="max-w-[85%] bg-brand-600 text-white p-3.5 rounded-2xl text-xs leading-relaxed shadow-sm">
+              ${msg.text}
+            </div>
+            <div class="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-200 flex items-center justify-center shrink-0 text-xs font-bold">
+              You
+            </div>
+          `;
+        }
+        thread.appendChild(row);
+      });
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    async function handleAiSubmit(event) {
+      if (event) event.preventDefault();
+      const input = document.getElementById("aiUserInput");
+      const query = input.value.trim();
+      if (!query) return;
+
+      input.value = "";
+      aiChatHistory.push({ role: "user", text: query });
+      renderAiChat();
+
+      // Show temporary typing indicator
+      aiChatHistory.push({ role: "assistant", text: "<i class='fa-solid fa-circle-notch fa-spin'></i> Consulting curriculum..." });
+      renderAiChat();
+
+      setTimeout(async () => {
+        aiChatHistory.pop(); // remove typing indicator
+        const reply = await generateAcademicResponse(query, aiExplanationMode);
+        aiChatHistory.push({ role: "assistant", text: reply });
+        renderAiChat();
+        logAction(`AI question asked: ${query.substring(0, 30)}...`);
+      }, 700);
+    }
+
+    function triggerQuickPrompt(text) {
+      document.getElementById("aiUserInput").value = text;
+      handleAiSubmit();
+    }
+
+    function clearAiChat() {
+      aiChatHistory.length = 0;
+      aiChatHistory.push({
+        role: "assistant",
+        text: "Chat cleared! How can I assist your studies today?"
+      });
+      renderAiChat();
+      showToast("AI conversation reset", "info");
+    }
+
+    async function generateAcademicResponse(query, mode) {
+      const q = query.toLowerCase();
+
+      // 1. Direct Gemini API call if enabled and user has key
+      if (APP_STATE.settings.aiEngine === "gemini-api" && APP_STATE.settings.geminiApiKey) {
+        try {
+          const systemInstruction = `You are GyanPath AI, an encouraging school tutor for Class 1 to 12. Explanation style: ${mode}. Keep formatting clean, structured, and age-appropriate.`;
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${APP_STATE.settings.geminiApiKey}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ role: "user", parts: [{ text: `${systemInstruction}\n\nStudent Query: ${query}` }] }]
+            })
+          });
+          const data = await response.json();
+          if (data.candidates && data.candidates[0].content) {
+            return data.candidates[0].content.parts[0].text.replace(/\n/g, "<br>");
+          }
+        } catch (e) {
+          console.warn("API call failed, falling back to smart offline simulation:", e);
+        }
+      }
+
+      // 2. Intelligent Offline Academic Knowledge Simulation
+      if (q.includes("photosynthesis") || q.includes("प्रकाश संश्लेषण")) {
+        if (mode === "simple") {
+          return "<strong>🌿 Photosynthesis made simple:</strong><br>Think of green leaves as a plant's solar kitchen! Sunlight + Water from roots + Carbon dioxide from air = Delicious glucose sugar for the plant, and fresh oxygen for us to breathe!";
+        }
+        return `
+          <strong>🌿 Biochemical Explanation of Photosynthesis:</strong><br>
+          <strong>Formula:</strong> <code>6CO₂ + 6H₂O + Sunlight ➔ C₆H₁₂O₆ + 6O₂</code><br>
+          <strong>Key Steps:</strong><br>
+          1. <em>Light Reaction:</em> Chlorophyll traps solar photon energy and splits H₂O into protons and oxygen gas.<br>
+          2. <em>Dark Reaction (Calvin Cycle):</em> Stroma enzymes reduce CO₂ into nutrient glucose (C₆H₁₂O₆).
+        `;
+      }
+
+      if (q.includes("quadratic") || q.includes("ax^2") || q.includes("equation")) {
+        return `
+          <strong>📐 Step-by-Step Quadratic Solver:</strong><br>
+          For any equation of the form <code>ax² + bx + c = 0</code>:<br>
+          1. <strong>Step 1:</strong> Identify coefficients <em>a, b,</em> and <em>c</em>.<br>
+          2. <strong>Step 2:</strong> Compute Discriminant <code>D = b² - 4ac</code>.<br>
+          3. <strong>Step 3:</strong> Apply quadratic formula: <code>x = (-b ± √D) / 2a</code>.<br>
+          <em>Practice Tip:</em> If D > 0, roots are distinct real numbers. If D = 0, roots are equal.
+        `;
+      }
+
+      if (q.includes("newton") || q.includes("law") || q.includes("motion")) {
+        return `
+          <strong>🚀 Newton's Three Laws of Motion:</strong><br>
+          1. <strong>First Law (Inertia):</strong> An object stays at rest or moves at constant velocity unless acted upon by an external net force.<br>
+          2. <strong>Second Law (F = ma):</strong> Force equals mass multiplied by acceleration.<br>
+          3. <strong>Third Law:</strong> For every action, there is an equal and opposite reaction!
+        `;
+      }
+
+      if (q.includes("pythagoras") || q.includes("triangle")) {
+        return `
+          <strong>📐 Pythagoras Theorem:</strong><br>
+          In any right-angled triangle:<br>
+          <code>(Hypotenuse)² = (Base)² + (Perpendicular)²</code><br>
+          <strong>Example:</strong> If base = 3 cm and perpendicular = 4 cm, then hypotenuse = √(3² + 4²) = √(9 + 16) = √25 = <strong>5 cm</strong>.
+        `;
+      }
+
+      // Default smart educational fallback
+      return `
+        <strong>💡 Academic Mentor Insight for: "${query}"</strong><br>
+        Great question! When studying this topic in your Class ${APP_STATE.settings.currentClass} curriculum:<br>
+        &bull; <strong>Fundamental Concept:</strong> Break down the core law into simple everyday physical observations.<br>
+        &bull; <strong>Formula / Derivation:</strong> Always state your assumptions and SI units clearly.<br>
+        &bull; <strong>Next Step:</strong> Review our Chapter Notes in the "Study Notes" tab for detailed solved examples.
+      `;
+    }
+
+    function saveAiSettings() {
+      APP_STATE.settings.aiEngine = document.getElementById("aiEngineMode").value;
+      APP_STATE.settings.geminiApiKey = document.getElementById("geminiApiKeyInput").value.trim();
+      saveState();
+      closeModal("aiConfigModal");
+      showToast("AI preferences saved", "success");
+    }
+
+    // 10. LIVE DOUBTS & BOOKING ENGINE
+    function handleDoubtBooking(event) {
+      event.preventDefault();
+      const subject = document.getElementById("doubtSubject").value;
+      const teacher = document.getElementById("doubtTeacher").value;
+      const text = document.getElementById("doubtText").value;
+
+      const newDoubt = {
+        id: `d-${Date.now()}`,
+        studentName: "Aarav Sharma",
+        subject,
+        teacher,
+        question: text,
+        status: "Assigned & In Queue",
+        time: "Just now"
+      };
+
+      if (!APP_STATE.doubtsQueue) APP_STATE.doubtsQueue = [];
+      APP_STATE.doubtsQueue.unshift(newDoubt);
+      saveState();
+
+      renderDoubtsQueue();
+      document.getElementById("doubtText").value = "";
+      showToast("Live doubt query submitted! Connecting to mentor...", "success");
+      logAction(`Submitted live doubt: ${subject}`);
+    }
+
+    function renderDoubtsQueue() {
+      const container = document.getElementById("doubtsQueueList");
+      if (!container) return;
+      container.innerHTML = "";
+
+      if (!APP_STATE.doubtsQueue || APP_STATE.doubtsQueue.length === 0) {
+        container.innerHTML = "<p class='text-xs text-slate-400'>No active doubts in queue.</p>";
+        return;
+      }
+
+      APP_STATE.doubtsQueue.forEach(d => {
+        const item = document.createElement("div");
+        item.className = "p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs space-y-1";
+        item.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-brand-600 dark:text-brand-400">${d.subject} &bull; ${d.teacher}</span>
+            <span class="text-[10px] bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded font-semibold">${d.status}</span>
+          </div>
+          <p class="text-slate-700 dark:text-slate-300">${d.question}</p>
+          <span class="text-[10px] text-slate-400">${d.time}</span>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function resolveDoubtDemo(btn) {
+      btn.textContent = "Resolved ✓";
+      btn.disabled = true;
+      btn.className = "px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 font-semibold border border-emerald-200";
+      showToast("Doubt marked resolved and student notified", "success");
+    }
+
+    // 11. STUDENT DASHBOARD RENDERING
+    function renderStudentDashboard() {
+      document.getElementById("dashClassLabel").textContent = `Class ${APP_STATE.settings.currentClass}`;
+      document.getElementById("dashBoardLabel").textContent = APP_STATE.settings.currentBoard;
+
+      const attempts = APP_STATE.userAttempts || [];
+      document.getElementById("dashTestCount").textContent = `${attempts.length} Tests`;
+
+      if (attempts.length > 0) {
+        const avg = Math.round(attempts.reduce((sum, a) => sum + a.accuracy, 0) / attempts.length);
+        document.getElementById("dashAvgScore").textContent = `${avg}%`;
+      } else {
+        document.getElementById("dashAvgScore").textContent = "N/A";
+      }
+
+      const bookmarks = APP_STATE.notes.filter(n => n.bookmarked);
+      document.getElementById("dashBookmarkCount").textContent = `${bookmarks.length} Notes`;
+
+      // Render test history table
+      const tblContainer = document.getElementById("studentTestHistoryTable");
+      if (attempts.length === 0) {
+        tblContainer.innerHTML = "<p class='text-xs text-slate-400 py-2'>No exam attempts logged yet. Take your first test!</p>";
+        return;
+      }
+
+      let rowsHtml = attempts.map(att => `
+        <tr class="border-b border-slate-100 dark:border-slate-800">
+          <td class="py-2.5 font-medium">${att.examTitle}</td>
+          <td class="py-2.5 text-slate-400">${att.date}</td>
+          <td class="py-2.5 font-bold">${att.score}/${att.total}</td>
+          <td class="py-2.5"><span class="px-2 py-0.5 rounded text-[11px] font-semibold ${att.accuracy >= 75 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300'}">${att.accuracy}%</span></td>
+        </tr>
+      `).join("");
+
+      tblContainer.innerHTML = `
+        <table class="w-full text-left text-xs">
+          <thead class="text-slate-400 border-b border-slate-200 dark:border-slate-700">
+            <tr>
+              <th class="pb-2">Test Name</th>
+              <th class="pb-2">Date</th>
+              <th class="pb-2">Score</th>
+              <th class="pb-2">Accuracy</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      `;
+    }
+
+    function downloadCertificate() {
+      showToast("Generating official completion certificate PDF...", "info");
+      setTimeout(() => {
+        showToast("Certificate downloaded: GyanPath-Class10-Excellence.pdf", "success");
+      }, 1200);
+    }
+
+    // 12. ADMIN CONTROL ROOM
+    function renderAdminView() {
+      document.getElementById("adminNotesCount").textContent = `${APP_STATE.notes.length} Resources`;
+      document.getElementById("adminTestAttemptsCount").textContent = `${(APP_STATE.userAttempts || []).length} Attempts`;
+
+      // Render Admin Materials Table
+      const tbody = document.getElementById("adminMaterialsTableBody");
+      tbody.innerHTML = "";
+      APP_STATE.notes.forEach(note => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="p-3 font-medium">${note.title}</td>
+          <td class="p-3 text-slate-500">Class ${note.class} (${note.board})</td>
+          <td class="p-3"><span class="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">${note.subject}</span></td>
+          <td class="p-3">
+            <button onclick="deleteNoteAdmin('${note.id}')" class="text-rose-500 hover:text-rose-700 font-semibold">
+              <i class="fa-solid fa-trash-can mr-1"></i> Delete
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Render Scholarship list
+      renderAdminScholarships();
+      renderAdminLogs();
+    }
+
+    function setAdminTab(tabKey) {
+      document.querySelectorAll(".admin-tab-btn").forEach(btn => {
+        if (btn.getAttribute("data-tab") === tabKey) {
+          btn.className = "admin-tab-btn px-4 py-3 border-b-2 border-brand-600 text-brand-600 dark:text-brand-400 font-semibold";
+        } else {
+          btn.className = "admin-tab-btn px-4 py-3 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200";
+        }
+      });
+      document.getElementById("adminTab-materials").classList.toggle("hidden", tabKey !== "materials");
+      document.getElementById("adminTab-scholarships").classList.toggle("hidden", tabKey !== "scholarships");
+      document.getElementById("adminTab-logs").classList.toggle("hidden", tabKey !== "logs");
+    }
+
+    function renderAdminScholarships() {
+      const container = document.getElementById("adminScholarshipList");
+      container.innerHTML = "";
+      (APP_STATE.scholarships || []).forEach(sch => {
+        const card = document.createElement("div");
+        card.className = "p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2">
+              <strong class="text-sm font-heading">${sch.name}</strong>
+              <span class="text-[10px] bg-brand-50 text-brand-600 px-1.5 py-0.5 rounded">Class ${sch.class} &bull; ${sch.board}</span>
+              <span class="text-[10px] font-mono text-slate-400">${sch.trackingCode}</span>
+            </div>
+            <p class="text-slate-600 dark:text-slate-300 mt-1">${sch.reason}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-1 rounded bg-emerald-100 text-emerald-800 font-bold">${sch.status}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderAdminLogs() {
+      const logBox = document.getElementById("adminLogsContainer");
+      if (!logBox) return;
+      logBox.innerHTML = (APP_STATE.logs || []).map(l => `<div>&gt; ${l}</div>`).join("");
+    }
+
+    function deleteNoteAdmin(noteId) {
+      if (confirm("Are you sure you want to delete this study note from the library?")) {
+        APP_STATE.notes = APP_STATE.notes.filter(n => n.id !== noteId);
+        saveState();
+        renderAdminView();
+        filterNotes();
+        showToast("Note removed from library", "info");
+        logAction(`Deleted note ID ${noteId}`);
+      }
+    }
+
+    function handleAddNoteSubmit(event) {
+      event.preventDefault();
+      const newNote = {
+        id: `note-${Date.now()}`,
+        title: document.getElementById("newNoteTitle").value.trim(),
+        class: Number(document.getElementById("newNoteClass").value),
+        board: document.getElementById("newNoteBoard").value,
+        subject: document.getElementById("newNoteSubject").value,
+        chapter: `Chapter: ${document.getElementById("newNoteTitle").value.trim()}`,
+        summary: document.getElementById("newNoteSummary").value.trim(),
+        bookmarked: false,
+        content: `<div>${document.getElementById("newNoteBody").value.trim().replace(/\n/g, '<br>')}</div>`
+      };
+
+      APP_STATE.notes.unshift(newNote);
+      saveState();
+      closeModal("addNoteModal");
+      filterNotes();
+      renderAdminView();
+      showToast("New note published successfully!", "success");
+      logAction(`Published note: ${newNote.title}`);
+    }
+
+    function handleCreateExamSubmit(event) {
+      event.preventDefault();
+      const newExam = {
+        id: `exam-${Date.now()}`,
+        title: document.getElementById("newExamTitle").value.trim(),
+        subject: document.getElementById("newExamSubject").value,
+        class: Number(APP_STATE.settings.currentClass),
+        durationMins: Number(document.getElementById("newExamDuration").value),
+        questions: [
+          {
+            id: `q-${Date.now()}`,
+            prompt: document.getElementById("newExamQ1").value.trim(),
+            options: [
+              document.getElementById("newExamOptA").value.trim(),
+              document.getElementById("newExamOptB").value.trim(),
+              "Option C: None of the above",
+              "Option D: All of the above"
+            ],
+            correctIndex: 0,
+            explanation: "Option A is correct according to the standard textbook definition."
+          }
+        ]
+      };
+
+      APP_STATE.exams.unshift(newExam);
+      saveState();
+      closeModal("addExamModal");
+      renderExamList();
+      showToast("Exam published to Test Arena!", "success");
+      logAction(`Created exam: ${newExam.title}`);
+    }
+
+    // 13. SCHOLARSHIP SUBMISSION
+    function handleScholarshipSubmit(event) {
+      event.preventDefault();
+      const code = `GP-SCH-${Math.floor(1000 + Math.random() * 9000)}`;
+      const sch = {
+        id: `sch-${Date.now()}`,
+        name: document.getElementById("schName").value.trim(),
+        class: Number(document.getElementById("schClass").value),
+        board: document.getElementById("schBoard").value,
+        reason: document.getElementById("schReason").value.trim(),
+        status: "Approved (Priority Aid)",
+        trackingCode: code
+      };
+
+      if (!APP_STATE.scholarships) APP_STATE.scholarships = [];
+      APP_STATE.scholarships.unshift(sch);
+      saveState();
+      closeModal("scholarshipModal");
+
+      alert(`Application received!\nYour Tracking Code is: ${code}\nFree study materials and weekly mentor matching have been granted.`);
+      showToast(`Scholarship application ${code} approved!`, "success");
+      logAction(`New scholarship application: ${sch.name}`);
+    }
+
+    // 14. DATA BACKUP & RESTORE MODULE (JSON)
+    function exportJsonBackup() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(APP_STATE, null, 2));
+      const dlAnchor = document.createElement("a");
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", `gyanpath_backup_${new Date().toISOString().split("T")[0]}.json`);
+      document.body.appendChild(dlAnchor);
+      dlAnchor.click();
+      dlAnchor.remove();
+      showToast("Backup exported successfully!", "success");
+      logAction("JSON data backup downloaded");
+    }
+
+    function importJsonBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed.notes && parsed.settings) {
+            APP_STATE = parsed;
+            saveState();
+            initApp();
+            closeModal("backupModal");
+            showToast("Backup restored successfully!", "success");
+            logAction("Restored database from JSON file");
+          } else {
+            showToast("Invalid GyanPath backup schema", "error");
+          }
+        } catch (err) {
+          showToast("Failed to parse backup JSON file", "error");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function confirmResetDemoData() {
+      if (confirm("Reset all platform data back to original default demo state? Any custom notes and quiz history will be restored.")) {
+        APP_STATE = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        saveState();
+        initApp();
+        closeModal("backupModal");
+        showToast("System reset to default demo data", "info");
+      }
+    }
+
+    // 15. MODAL & TOAST HELPERS
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("hidden");
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("hidden");
+    }
+
+    function showToast(message, type = "info") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      const icons = {
+        success: "fa-circle-check text-emerald-500",
+        error: "fa-circle-exclamation text-rose-500",
+        info: "fa-circle-info text-blue-500"
+      };
+
+      toast.className = "pointer-events-auto flex items-center gap-3 p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl text-xs font-semibold text-slate-800 dark:text-slate-100 transform transition-all duration-300 translate-y-2 opacity-0";
+      toast.innerHTML = `
+        <i class="fa-solid ${icons[type] || icons.info} text-base"></i>
+        <span class="flex-1">${message}</span>
+      `;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove("translate-y-2", "opacity-0");
+      });
+
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "translate-y-2");
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function copyToClipboard(btn) {
+      const text = btn.closest(".space-y-2").querySelector("div").innerText;
+      const tempArea = document.createElement("textarea");
+      tempArea.value = text;
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempArea);
+      showToast("Answer copied to clipboard!", "success");
+    }
+
+    // Close role menu when clicking outside
+    document.addEventListener("click", (e) => {
+      const dropdown = document.getElementById("roleMenu");
+      const btn = document.getElementById("roleDropdownBtn");
+      if (dropdown && !dropdown.contains(e.target) && !btn.contains(e.target)) {
+        dropdown.classList.add("hidden");
+      }
+    });
+
+    // 16. INITIALIZE APPLICATION ON WINDOW LOAD
+    function initApp() {
+      initStorage();
+      initTheme();
+      initClassPickers();
+      syncClassSelectors();
+      updateRoleUI();
+      renderAiChat();
+      filterNotes();
+      renderExamList();
+      renderDoubtsQueue();
+    }
+
+    window.onload = function() {
+      initApp();
+      navigate("home");
+    };
+  </script>
+</body>
+</html>
+```
